@@ -1,0 +1,41 @@
+trigger:
+  branches:
+    include:
+      - main
+
+schedules:
+  - cron: "0 6 * * *"  # 8 AM SAST = 6 AM UTC
+    displayName: Daily 8 AM Test Run
+    branches:
+      include:
+        - main
+    always: true
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  MAVEN_OPTS: "-Dmaven.test.failure.ignore=false"
+
+steps:
+  - task: Maven@3
+    inputs:
+      mavenPomFile: 'pom.xml'
+      goals: 'clean test'
+      options: '-Dmaven.test.failure.ignore=false'
+      publishJUnitResults: true
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'  # JUnit-style from Surefire
+
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      searchFolder: '$(System.DefaultWorkingDirectory)'
+      failTaskOnFailedTests: true
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: 'reports'
+      ArtifactName: 'ExtentReport'
+      publishLocation: 'Container'
