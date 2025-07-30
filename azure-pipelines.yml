@@ -4,8 +4,8 @@ trigger:
       - main
 
 schedules:
-  - cron: "0 6 * * *"  # 8 AM SAST = 6 AM UTC
-    displayName: Daily 8AM Run
+  - cron: "0 6 * * *"   # 6 AM UTC = 8 AM South Africa time (UTC+2)
+    displayName: Daily 8 AM Test Run
     branches:
       include:
         - main
@@ -14,13 +14,25 @@ schedules:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$(Pipeline.Workspace)/.m2/repository"
+
 steps:
+
+  - task: Cache@2
+    inputs:
+      key: 'maven | "$(Agent.OS)" | pom.xml'
+      restoreKeys: |
+        maven | "$(Agent.OS)"
+      path: $(Pipeline.Workspace)/.m2/repository
+    displayName: 'Cache Maven packages'
+
   - task: Maven@4
-    displayName: 'Run TestNG Tests'
+    displayName: 'Run Tests with Maven'
     inputs:
       mavenPomFile: 'pom.xml'
       goals: 'clean test'
-      options: '-B -e -V'
+      options: '-Dsurefire.suiteXmlFiles=testng.xml'
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Extent Report Artifact'
@@ -29,34 +41,15 @@ steps:
       ArtifactName: 'ExtentReport'
       publishLocation: 'Container'
 
-  - task: ArchiveFiles@2
-    displayName: 'Zip Extent Report'
-    inputs:
-      rootFolderOrFile: 'reports'
-      includeRootFolder: false
-      archiveType: 'zip'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/ExtentReport.zip'
-      replaceExistingArchive: true
-
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Zipped Report'
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)/ExtentReport.zip'
-      ArtifactName: 'ExtentReportZip'
-      publishLocation: 'Container'
-
   - task: HttpRequest@2
-    displayName: 'Trigger Logic App to Email Report'
+    displayName: 'Call Logic App to Send Email'
     inputs:
+      url: '<YOUR_LOGIC_APP_TRIGGER_URL>'  # Replace with your actual Logic App URL
       method: 'POST'
-      url: '$(LOGIC_APP_URL)'  # Store in Pipeline Secrets
       headers: |
         Content-Type: application/json
       body: |
         {
           "buildId": "$(Build.BuildId)",
-          "project": "$(System.TeamProject)",
-          "definition": "$(Build.DefinitionName)",
-          "artifactName": "ExtentReportZip",
-          "reportLink": "$(Build.ArtifactStagingDirectory)/ExtentReport.zip"
+          "reportDownloadUrl": "https://dev.azure.com/$(System.CollectionUri)/$(System.TeamProject)/_apis/build/builds/$(Build.BuildId)/artifacts?artifactName=ExtentReport&api-version=6.0&%24format=zip"
         }
