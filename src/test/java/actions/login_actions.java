@@ -23,29 +23,22 @@ public class login_actions extends base_class {
 
     public void login() {
 
-        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(10));
-        WebElement usernameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("frmlogin:username")));
-        usernameInput.sendKeys("TE000159");
-        _login_page.login_button.click();
+        String username = DriverFactory.prop.getProperty("username");
+        String password = getProperty("password");
 
+        if (username == null || username.isEmpty()) {
+            log.error("Username is missing in properties file.");
+            throw new IllegalStateException("Missing required property: username");
+        }
 
-
-        //        String username = DriverFactory.prop.getProperty("username");
-        // String password = getProperty("password"); // if needed
-
-//        if (username == null || username.isEmpty()) {
-//            log.error("Username is missing in properties file.");
-//            throw new IllegalStateException("Missing required property: username");
-//        }
-//
-//        try {
-//            _login_page.username_textbox.sendKeys(username);
-//            // _login_page.password_textbox.sendKeys(password); // if password is needed
-//            _login_page.login_button.click();
-//            log.info("User logged in successfully with username: {}", username);
-//        } catch (Exception e) {
-//            log.error("Login failed: {}", e.getMessage(), e);
-//            throw e;
-//        }
+        try {
+            _login_page.username_textbox.sendKeys(username);
+            // _login_page.password_textbox.sendKeys(password); // if password is needed
+            _login_page.login_button.click();
+            log.info("User logged in successfully with username: {}", username);
+        } catch (Exception e) {
+            log.error("Login failed: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 }
