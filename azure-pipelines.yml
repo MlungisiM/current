@@ -67,7 +67,7 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(System.DefaultWorkingDirectory)/reports'
-    ArtifactName: 'ExtentReport'
+    ArtifactName: 'automation-report.html'
     publishLocation: 'Container'
   displayName: 'Publish Extent Report'
 
