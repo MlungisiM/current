@@ -12,7 +12,7 @@ schedules:
     always: true  # Run even if no changes
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
   mavenOpts: '-Xmx1024m'
@@ -43,27 +43,16 @@ steps:
     sudo chmod -R 777 $(System.DefaultWorkingDirectory)/target || true
   displayName: 'Fix target directory permissions'
 
-# Step 4: Run Tests
+# Step 4: Run Tests using testng.xml
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
     goals: 'test'
-    options: '-B'
-  displayName: 'Run Tests'
+    options: '-B -DsuiteXmlFile=testng.xml'
+  displayName: 'Run Tests using testng.xml'
 
 
-
-# Step 5: Publish Test Results
-- task: PublishTestResults@2
-  inputs:
-    testResultsFiles: '**/target/surefire-reports/emailable-report-*.html'
-    testResultsFormat: 'JUnit'
-    failTaskOnFailedTests: true
-  condition: succeededOrFailed()
-  displayName: 'Publish JUnit Test Results'
-
-
-# Step 6: Publish HTML Report (e.g., ExtentReports)
+# Step 5: Publish HTML Report (e.g., ExtentReports)
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(System.DefaultWorkingDirectory)/reports'
@@ -71,11 +60,11 @@ steps:
     publishLocation: 'Container'
   displayName: 'Publish Extent Report'
 
-  # Step 7: Prevent pipeline from failing if report is missing
+  # Step 6: Prevent pipeline from failing if report is missing
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(System.DefaultWorkingDirectory)/reports'
-    ArtifactName: 'ExtentReport'
+    ArtifactName: 'automation-report.html'
     publishLocation: 'Container'
   displayName: 'Publish Extent Report'
   continueOnError: true
