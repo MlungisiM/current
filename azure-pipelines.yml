@@ -18,6 +18,13 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$(Pipeline.Workspace)/.m2/repository"
 
 steps:
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '21'
+    jdkArchitecture: 'x64'
+    jdkSource: 'AzureHosted'
+
+
 
 - task: Cache@2
   inputs:
@@ -45,3 +52,4 @@ steps:
   inputs:
     pathToPublish: 'reports'
     artifactName: 'ExtentReport'
+
