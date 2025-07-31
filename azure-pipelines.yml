@@ -23,7 +23,7 @@ steps:
 - task: JavaToolInstaller@0
   inputs:
     versionSpec: '21'
-    jdkArchitecture: 'x64'
+    jdkArchitectureOption: 'x64'
     jdkSourceOption: 'PreInstalled'
   displayName: 'Set up Java 21'
 
@@ -49,6 +49,8 @@ steps:
     options: '-B'
   displayName: 'Run Tests'
 
+  
+
 # Step 5: Publish Test Results
 - task: PublishTestResults@2
   inputs:
@@ -58,11 +60,24 @@ steps:
   condition: succeededOrFailed()
   displayName: 'Publish JUnit Test Results'
 
+
 # Step 6: Publish HTML Report (e.g., ExtentReports)
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: 'reports'
-    ArtifactName: 'TestReports'
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/reports'
+    ArtifactName: 'ExtentReport'
     publishLocation: 'Container'
-  condition: always()
   displayName: 'Publish Extent Report'
+
+  # Step 7: Prevent pipeline from failing if report is missing
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/reports'
+    ArtifactName: 'ExtentReport'
+    publishLocation: 'Container'
+  displayName: 'Publish Extent Report'
+  continueOnError: true
+
+
+  
+
