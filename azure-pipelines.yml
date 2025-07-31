@@ -12,7 +12,7 @@ schedules:
     always: true  # Run even if no changes
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest'
 
 variables:
   mavenOpts: '-Xmx1024m'
