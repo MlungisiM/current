@@ -87,35 +87,18 @@
 
     </dependencies>
 
-    <build>
-        <plugins>
-            <!-- Maven Versions Plugin -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>2.15.0</version>
-                <configuration>
-                    <allowSnapshots>false</allowSnapshots>
-                    <ignoredVersions>
-                        <ignoredVersion>.*-SNAPSHOT</ignoredVersion>
-                        <ignoredVersion>.*-beta</ignoredVersion>
-                        <ignoredVersion>.*-alpha</ignoredVersion>
-                        <ignoredVersion>.*-rc</ignoredVersion>
-                    </ignoredVersions>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.2</version>
-                <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>testng.xml</suiteXmlFile>
-                    </suiteXmlFiles>
-                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                </configuration>
-            </plugin>
+  <build>
+<plugins>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.2.5</version>
+          <configuration>
+              <suiteXmlFiles>
+                  <suiteXmlFile>testng.xml</suiteXmlFile>
+              </suiteXmlFiles>
+          </configuration>
+      </plugin>
         </plugins>
     </build>
 </project>
