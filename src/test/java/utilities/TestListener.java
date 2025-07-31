@@ -18,7 +18,7 @@ public class TestListener extends base_class implements ITestListener {
     private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
     public void onStart(ITestContext context) {
-        ExtentSparkReporter sparkReporter = new ExtentSparkReporter("./reports/automation-report.html");
+        ExtentSparkReporter sparkReporter = new ExtentSparkReporter("reports/automation-report.html");
 
         sparkReporter.config().setDocumentTitle("Automation Test Report");
         sparkReporter.config().setReportName("Cregalink UI Testing");
