@@ -1,33 +1,83 @@
 trigger:
   branches:
     include:
-      - master
+      - "*"  # Runs on every branch commit
 
 schedules:
-  - cron: "0 6 * * *"  # UTC time; 6am UTC == 8am South Africa (UTC+2)
-    displayName: Daily Run @ 8am SAST
+  - cron: "0 6 * * *"  # 8 AM SAST = 6 AM UTC
+    displayName: Daily Build at 8AM SAST
     branches:
       include:
-        - master
-    always: true
+        - main
+    always: true  # Run even if no changes
 
 pool:
   vmImage: 'ubuntu-latest'
 
-jobs:
-- job: BuildAndTest
-  steps:
+variables:
+  mavenOpts: '-Xmx1024m'
 
-    - task: JavaToolInstaller@0
-      inputs:
-        versionSpec: '21'
-        jdkArchitectureOption: 'x64'
-        jdkSourceOption: 'PreInstalled'
+steps:
 
-    - task: Maven@4
-      inputs:
-        mavenPomFile: 'pom.xml'
-        goals: 'clean test'
-        options: '-X -e'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-**'
+# Step 1: Use Java 21
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '21'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+  displayName: 'Set up Java 21'
+
+
+# Step 2: Clean Project
+- task: Maven@4
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'clean'
+    options: '-B'
+  displayName: 'Maven Clean'
+
+# Step 3: Fix Permissions (if needed)
+- script: |
+    sudo chmod -R 777 $(System.DefaultWorkingDirectory)/target || true
+  displayName: 'Fix target directory permissions'
+
+# Step 4: Run Tests
+- task: Maven@4
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'test'
+    options: '-B'
+  displayName: 'Run Tests'
+
+  
+
+# Step 5: Publish Test Results
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    testResultsFormat: 'JUnit'
+    failTaskOnFailedTests: true
+  condition: succeededOrFailed()
+  displayName: 'Publish JUnit Test Results'
+
+
+# Step 6: Publish HTML Report (e.g., ExtentReports)
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/reports'
+    ArtifactName: 'ExtentReport'
+    publishLocation: 'Container'
+  displayName: 'Publish Extent Report'
+
+  # Step 7: Prevent pipeline from failing if report is missing
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/reports'
+    ArtifactName: 'ExtentReport'
+    publishLocation: 'Container'
+  displayName: 'Publish Extent Report'
+  continueOnError: true
+
+
+  
+
