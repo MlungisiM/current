@@ -1,14 +1,14 @@
 trigger:
   branches:
     include:
-      - main
+      - master
 
 schedules:
-  - cron: "0 6 * * *"   # 6 AM UTC = 8 AM South Africa time (UTC+2)
-    displayName: Daily 8 AM Test Run
+  - cron: "0 6 * * *"  # 8AM SAST = 6AM UTC
+    displayName: Daily 8AM Test Run
     branches:
       include:
-        - main
+        - master
     always: true
 
 pool:
@@ -19,24 +19,29 @@ variables:
 
 steps:
 
-  - task: Cache@2
-    inputs:
-      key: 'maven | "$(Agent.OS)" | pom.xml'
-      restoreKeys: |
-        maven | "$(Agent.OS)"
-      path: $(Pipeline.Workspace)/.m2/repository
-    displayName: 'Cache Maven packages'
+- task: Cache@2
+  inputs:
+    key: 'maven | "$(Agent.OS)" | **/pom.xml'
+    restoreKeys: |
+      maven | "$(Agent.OS)"
+    path: $(Pipeline.Workspace)/.m2/repository
 
-  - task: Maven@4
-    displayName: 'Run Tests with Maven'
-    inputs:
-      mavenPomFile: 'pom.xml'
-      goals: 'clean test'
-      options: '-Dsurefire.suiteXmlFiles=testng.xml'
+- task: Maven@4
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'clean test'
+    options: '-Dmaven.test.failure.ignore=false'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/emailable-report-*.html'
 
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Extent Report Artifact'
-    inputs:
-      PathtoPublish: './reports/automation-report.html'
-      ArtifactName: 'ExtentReport'
-      publishLocation: 'Container'
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: '**/surefire-reports/emailable-report-*.html'
+    testRunTitle: 'TestNG Results'
+    failTaskOnFailedTests: false
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Archive Extent Report'
+  inputs:
+    pathToPublish: 'reports'
+    artifactName: 'ExtentReport'
