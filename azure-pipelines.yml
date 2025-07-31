@@ -4,8 +4,8 @@ trigger:
       - master
 
 schedules:
-  - cron: "0 6 * * *"  # 8AM SAST = 6AM UTC
-    displayName: Daily 8AM Test Run
+  - cron: "0 6 * * *"  # UTC time; 6am UTC == 8am South Africa (UTC+2)
+    displayName: Daily Run @ 8am SAST
     branches:
       include:
         - master
@@ -14,40 +14,20 @@ schedules:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$(Pipeline.Workspace)/.m2/repository"
+jobs:
+- job: BuildAndTest
+  steps:
 
-steps:
-- task: JavaToolInstaller@0
-  inputs:
-    versionSpec: '21'
-    jdkArchitectureOption: 'x64'
-    jdkSourceOption: 'PreInstalled'
+    - task: JavaToolInstaller@0
+      inputs:
+        versionSpec: '21'
+        jdkArchitectureOption: 'x64'
+        jdkSourceOption: 'PreInstalled'
 
-- task: Cache@2
-  inputs:
-    key: 'maven | "$(Agent.OS)" | **/pom.xml'
-    restoreKeys: |
-      maven | "$(Agent.OS)"
-    path: $(Pipeline.Workspace)/.m2/repository
-
-- task: Maven@4
-  inputs:
-    mavenPomFile: 'pom.xml'
-    goals: 'clean test'
-    options: '-Dmaven.test.failure.ignore=false'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/emailable-report-*.html'
-
-- task: PublishTestResults@2
-  inputs:
-    testResultsFiles: '**/surefire-reports/emailable-report-*.html'
-    testRunTitle: 'TestNG Results'
-    failTaskOnFailedTests: false
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Archive Extent Report'
-  inputs:
-    pathToPublish: 'reports'
-    artifactName: 'ExtentReport'
-
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'clean test'
+        options: '-X -e'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-**'
