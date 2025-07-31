@@ -17,7 +17,6 @@ public class TestListener extends base_class implements ITestListener {
     private static ExtentSparkReporter reporter;
     private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
-
     public void onStart(ITestContext context) {
         ExtentSparkReporter sparkReporter = new ExtentSparkReporter("./reports/automation-report.html");
 
