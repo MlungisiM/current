@@ -40,16 +40,3 @@ steps:
       PathtoPublish: 'reports/CAF_Execution_Report.html'
       ArtifactName: 'ExtentReport'
       publishLocation: 'Container'
-
-  - task: HttpRequest@2
-    displayName: 'Call Logic App to Send Email'
-    inputs:
-      url: '<YOUR_LOGIC_APP_TRIGGER_URL>'  # Replace with your actual Logic App URL
-      method: 'POST'
-      headers: |
-        Content-Type: application/json
-      body: |
-        {
-          "buildId": "$(Build.BuildId)",
-          "reportDownloadUrl": "https://dev.azure.com/$(System.CollectionUri)/$(System.TeamProject)/_apis/build/builds/$(Build.BuildId)/artifacts?artifactName=ExtentReport&api-version=6.0&%24format=zip"
-        }
