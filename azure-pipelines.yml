@@ -37,6 +37,6 @@ steps:
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Extent Report Artifact'
     inputs:
-      PathtoPublish: 'reports/CAF_Execution_Report.html'
+      PathtoPublish: './reports/automation-report.html'
       ArtifactName: 'ExtentReport'
       publishLocation: 'Container'
