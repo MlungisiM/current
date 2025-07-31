@@ -21,10 +21,8 @@ steps:
 - task: JavaToolInstaller@0
   inputs:
     versionSpec: '21'
-    jdkArchitecture: 'x64'
-    jdkSource: 'AzureHosted'
-
-
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
 
 - task: Cache@2
   inputs:
