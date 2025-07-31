@@ -10,12 +10,14 @@ import com.aventstack.extentreports.reporter.configuration.Theme;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+import configurations.screenshotUtil;
 
-public class TestListener extends base_class implements ITestListener {
+public class TestListener implements ITestListener {
 
     private static ExtentReports extent;
     private static ExtentSparkReporter reporter;
     private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
+    screenshotUtil ScreenshotUtil = new screenshotUtil();
 
     public void onStart(ITestContext context) {
         ExtentSparkReporter sparkReporter = new ExtentSparkReporter("reports/automation-report.html");
@@ -44,36 +46,30 @@ public class TestListener extends base_class implements ITestListener {
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        String testName = result.getMethod().getDescription();
-        if (testName == null || testName.isEmpty()) {
-            testName = result.getMethod().getMethodName();
-        }
-
-        // Take screenshot, assuming it saves as ./reports/<testName>.png
-        takeScreenshot(testName);
+        String testName = result.getMethod().getMethodName();
+        String screenshotPath = ScreenshotUtil.takeScreenshot(testName);
 
         try {
-            test.get().log(Status.PASS, testName + " executed successfully")
-                    .info(MediaEntityBuilder.createScreenCaptureFromPath("./reports/" + testName + ".png").build());
+            test.get()
+                    .pass("Test passed: " + testName)
+                    .info(MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
         } catch (Exception e) {
-            test.get().log(Status.PASS, testName + " executed successfully (screenshot failed to attach)");
+            test.get().pass("Test passed but screenshot failed.");
         }
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        String testName = result.getMethod().getDescription();
-        if (testName == null || testName.isEmpty()) {
-            testName = result.getMethod().getMethodName();
-        }
-
-        takeScreenshot(testName);
+        String testName = result.getMethod().getMethodName();
+        String screenshotPath = ScreenshotUtil.takeScreenshot(testName);
 
         try {
-            test.get().log(Status.FAIL, testName + " failed. See stacktrace/logs for details.")
-                    .info(MediaEntityBuilder.createScreenCaptureFromPath("./reports/" + testName + ".png").build());
+            test.get()
+                    .fail("Test failed: " + testName)
+                    .fail(result.getThrowable())
+                    .info(MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
         } catch (Exception e) {
-            test.get().log(Status.FAIL, testName + " failed. Screenshot failed to attach.");
+            test.get().fail("Screenshot could not be attached.");
         }
     }
 
