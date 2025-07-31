@@ -27,6 +27,8 @@ steps:
     jdkSourceOption: 'PreInstalled'
   displayName: 'Set up Java 21'
 
+- script: java -version
+  displayName: 'Check Java Version'
 
 # Step 2: Clean Project
 - task: Maven@4
@@ -49,12 +51,12 @@ steps:
     options: '-B'
   displayName: 'Run Tests'
 
-  
+
 
 # Step 5: Publish Test Results
 - task: PublishTestResults@2
   inputs:
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    testResultsFiles: '**/target/surefire-reports/emailable-report-*.html'
     testResultsFormat: 'JUnit'
     failTaskOnFailedTests: true
   condition: succeededOrFailed()
