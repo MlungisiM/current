@@ -18,13 +18,17 @@ public class TestListener extends base_class implements ITestListener {
     private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
 
-    public void onStart(ITestResult context) {
-        reporter = new ExtentSparkReporter("./reports/Tech Foundation_Execution_Report.html");
-        reporter.config().setDocumentTitle("Tech Foundation Execution Results");
-        reporter.config().setReportName("Tech Foundation Execution Results");
-        reporter.config().setTheme(Theme.DARK);
+    public void onStart(ITestContext context) {
+        ExtentSparkReporter sparkReporter = new ExtentSparkReporter("./reports/automation-report.html");
+
+        sparkReporter.config().setDocumentTitle("Automation Test Report");
+        sparkReporter.config().setReportName("Cregalink UI Testing");
+        sparkReporter.config().setTheme(Theme.DARK);
+
         extent = new ExtentReports();
-        extent.attachReporter(reporter);
+        extent.attachReporter(sparkReporter);
+        extent.setSystemInfo("Environment", "QA");
+        extent.setSystemInfo("User", System.getProperty("username"));
     }
 
     @Override
@@ -35,7 +39,7 @@ public class TestListener extends base_class implements ITestListener {
         }
         ExtentTest extentTest = extent.createTest(testName)
                 .assignAuthor("Mlungisi_Mbele")
-                .assignCategory("Health_Check");
+                .assignCategory("Regression");
         test.set(extentTest);
     }
 
@@ -51,7 +55,7 @@ public class TestListener extends base_class implements ITestListener {
 
         try {
             test.get().log(Status.PASS, testName + " executed successfully")
-                    .info(MediaEntityBuilder.createScreenCaptureFromPath("reports/" + testName + ".png").build());
+                    .info(MediaEntityBuilder.createScreenCaptureFromPath("./reports/" + testName + ".png").build());
         } catch (Exception e) {
             test.get().log(Status.PASS, testName + " executed successfully (screenshot failed to attach)");
         }
@@ -68,7 +72,7 @@ public class TestListener extends base_class implements ITestListener {
 
         try {
             test.get().log(Status.FAIL, testName + " failed. See stacktrace/logs for details.")
-                    .info(MediaEntityBuilder.createScreenCaptureFromPath("reports/" + testName + ".png").build());
+                    .info(MediaEntityBuilder.createScreenCaptureFromPath("./reports/" + testName + ".png").build());
         } catch (Exception e) {
             test.get().log(Status.FAIL, testName + " failed. Screenshot failed to attach.");
         }
@@ -85,7 +89,9 @@ public class TestListener extends base_class implements ITestListener {
 
     @Override
     public void onFinish(ITestContext context) {
-        extent.flush();
+        if (extent != null) {
+            extent.flush();
+        }
     }
 
     // Other overrides (onTestFailedButWithinSuccessPercentage) can remain default or empty

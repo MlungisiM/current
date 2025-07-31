@@ -1,45 +1,61 @@
 package base;
 
-import factory.driver_factory;
+import configurations.ConfigReader;
+import factory.DriverFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
-public abstract class base_class extends driver_factory {
+public abstract class base_class extends DriverFactory {
 
     public static Logger log = LogManager.getLogger(base_class.class);
-    public static Properties prop = null;
+    private static final Properties prop = new Properties();
 
     @BeforeMethod
-    public static void setUp() throws Exception {
-        LaunchBrowser();
+    public void setUp() throws Exception {
+        DriverFactory.prop = ConfigReader.loadProperties("web_config.properties");
+        WebDriver driver = DriverFactory.initDriver(); // FIXED: this now returns driver
     }
+
 
     @AfterMethod
-    //Tear down method - return driver into its initial state
-    public static void tearDown() {
-        driver_factory.quitDriver();
+    public void tearDown() {
+        if (DriverFactory.getDriver() != null) {
+            DriverFactory.getDriver().quit();
+            DriverFactory.removeDriver();
+        }
     }
 
-    //Load web_config.properties file
-    public base_class() {
-        prop = new Properties();
-        String path = System.getProperty("user.dir") + "/src/main/resources/WebConfig.properties";
+    public base_class()
+    {
+        try (InputStream input = base_class.class
+                .getClassLoader()
+                .getResourceAsStream("web_config.properties")) {
 
-        try (FileInputStream propFile = new FileInputStream(path)) {
-            prop.load(propFile);
+            if (input == null) {
+                throw new RuntimeException("web_config.properties not found in resources.");
+            }
+            prop.load(input);
         } catch (IOException e) {
-            log.error("Failed to load properties file: " + e.getMessage());
-            throw new RuntimeException("Failed to load properties file: " + path, e);
+            throw new RuntimeException("Failed to load web_config.properties", e);
         }
+    }
+    public static Properties getProperties() {
+        return prop;
+    }
+
+    public static String getProperty(String key) {
+        return prop.getProperty(key);
     }
 
     // Thread-safe screenshot method
