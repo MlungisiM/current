@@ -36,9 +36,12 @@ public class DriverFactory {
     }
 
     public static WebDriver initDriver() {
-        launchBrowser();         // set ThreadLocal driver
-        return getDriver();      // return it for use
+        if (getDriver() == null) {
+            launchBrowser(); // launches & sets driver
+        }
+        return getDriver(); // ✅ always return a usable driver
     }
+
 
 
 

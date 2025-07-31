@@ -47,9 +47,10 @@ public class TestListener implements ITestListener {
     @Override
     public void onTestSuccess(ITestResult result) {
         String testName = result.getMethod().getMethodName();
-        String screenshotPath = ScreenshotUtil.takeScreenshot(testName);
+        String screenshotPath = screenshotUtil.takeScreenshot(testName);
 
         try {
+            assert screenshotPath != null;
             test.get()
                     .pass("Test passed: " + testName)
                     .info(MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
@@ -61,9 +62,10 @@ public class TestListener implements ITestListener {
     @Override
     public void onTestFailure(ITestResult result) {
         String testName = result.getMethod().getMethodName();
-        String screenshotPath = ScreenshotUtil.takeScreenshot(testName);
+        String screenshotPath = screenshotUtil.takeScreenshot(testName);
 
         try {
+            assert screenshotPath != null;
             test.get()
                     .fail("Test failed: " + testName)
                     .fail(result.getThrowable())
