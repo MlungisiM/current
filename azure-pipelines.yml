@@ -51,6 +51,12 @@ steps:
     options: '-B -DsuiteXmlFile=testng.xml'
   displayName: 'Run Tests using testng.xml'
 
+- script: |
+    echo "Checking for report..."
+    ls -la $(System.DefaultWorkingDirectory)/reports
+    echo "Checking root just in case..."
+    ls -la /reports
+  displayName: 'Debug: Check report location'
 
 # Step 5: Publish HTML Report (e.g., ExtentReports)
 - task: PublishBuildArtifacts@1
@@ -59,15 +65,16 @@ steps:
     ArtifactName: 'automation-report.html'
     publishLocation: 'Container'
   displayName: 'Publish Extent Report'
+  continueOnError: true
 
   # Step 6: Prevent pipeline from failing if report is missing
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)/reports'
-    ArtifactName: 'automation-report.html'
-    publishLocation: 'Container'
-  displayName: 'Publish Extent Report'
-  continueOnError: true
+#- task: PublishBuildArtifacts@1
+ # inputs:
+    #PathtoPublish: '$(System.DefaultWorkingDirectory)/reports'
+   # ArtifactName: 'automation-report.html'
+   # publishLocation: 'Container'
+  #displayName: 'Publish Extent Report'
+  #continueOnError: true
 
 
   

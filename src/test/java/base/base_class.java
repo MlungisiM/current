@@ -66,6 +66,7 @@ public abstract class base_class extends DriverFactory {
             FileUtils.copyFile(source, destination);
             System.out.println("Screenshot taken: " + dest);
         } catch (Exception e) {
+            log.error("Failed to take screenshot: " + e.getMessage());
             System.err.println("Failed to take screenshot: " + e.getMessage());
             e.printStackTrace();
         }
