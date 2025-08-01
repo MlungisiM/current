@@ -18,7 +18,7 @@ public class login_tests extends base_class {
     }
 
     @Test(testName = "Login Successfully")
-    public void testLoginSuccess() {
+    public void Login_Successfully() {
         login.login();
     }
 }

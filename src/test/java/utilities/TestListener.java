@@ -27,8 +27,9 @@ public class TestListener implements ITestListener {
 
         extent = new ExtentReports();
         extent.attachReporter(sparkReporter);
+        extent.setSystemInfo("System", "CregaLink");
         extent.setSystemInfo("Environment", "QA");
-        extent.setSystemInfo("User", System.getProperty("username"));
+        extent.setSystemInfo("Version", "1.0");
     }
 
     @Override

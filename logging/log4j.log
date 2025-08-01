@@ -1,3 +1,6 @@
-10:46:40.781 [main] INFO  - Starting Chrome driver
-10:46:41.084 [main] INFO  - Page load time: 0 seconds
-10:46:41.944 [main] INFO  - User logged in successfully with username: TE000159
+12:51:20.279 [TestNG-tests-1] INFO  - Starting Chrome driver
+12:51:20.279 [TestNG-tests-2] INFO  - Starting Chrome driver
+12:51:20.588 [TestNG-tests-2] INFO  - Page load time: 0 seconds
+12:51:20.588 [TestNG-tests-1] INFO  - Page load time: 0 seconds
+12:51:21.297 [TestNG-tests-2] INFO  - User logged in successfully with username: TE000159
+12:51:21.729 [TestNG-tests-1] INFO  - User logged in successfully with username: TE000159
