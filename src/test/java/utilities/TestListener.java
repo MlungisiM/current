@@ -17,7 +17,6 @@ public class TestListener implements ITestListener {
     private static ExtentReports extent;
     private static ExtentSparkReporter reporter;
     private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
-    screenshotUtil ScreenshotUtil = new screenshotUtil();
 
     public void onStart(ITestContext context) {
         ExtentSparkReporter sparkReporter = new ExtentSparkReporter("reports/automation-report.html");
@@ -90,6 +89,4 @@ public class TestListener implements ITestListener {
             extent.flush();
         }
     }
-
-    // Other overrides (onTestFailedButWithinSuccessPercentage) can remain default or empty
 }
