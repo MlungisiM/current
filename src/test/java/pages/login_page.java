@@ -10,17 +10,29 @@ public class login_page {
 
     private WebDriver driver;
 
-    @FindBy(id = "frmlogin:username")
-    public WebElement username_textbox;
+    @FindBy(id = "i0116")
+    public WebElement sso_username_textbox;
 
-    @FindBy(id = "frmlogin:password")
-    public WebElement password_textbox;
+    @FindBy(id = "idSIButton9")
+    public WebElement sso_next_button;
 
-    @FindBy(id = "frmlogin:btnlogin")
-    public WebElement login_button;
+    @FindBy(id = "i0118")
+    public WebElement sso_password_textbox;
 
-    @FindBy(id = "frmlogin:lostpwd")
+    @FindBy(id = "idSIButton9")
+    public WebElement sso_signIn_button;
+
+    @FindBy(id = "idA_PWD_ForgotPassword")
     public WebElement forgot_password_link;
+
+    @FindBy(id = "frmlogin")
+    public WebElement missing_username_message;
+
+    @FindBy(id = "tileList")
+    public WebElement mfa_username_textbox;
+
+    @FindBy(id = "oneTimeCodePrimaryButton")
+    public WebElement mfa_verify_button;
 
     public login_page() {
         this.driver = DriverFactory.getDriver();

@@ -58,7 +58,7 @@ public class DriverFactory {
                 case "chrome" -> {
                     WebDriverManager.chromedriver().setup();
                     ChromeOptions chromeOptions = new ChromeOptions();
-                    chromeOptions.addArguments("--headless=new");
+                    //chromeOptions.addArguments("--headless=new");
                     webDriver = new ChromeDriver(chromeOptions);
                     log.info("Starting Chrome driver");
                 }
@@ -80,7 +80,7 @@ public class DriverFactory {
             setDriver(webDriver);
 
             long start = System.currentTimeMillis();
-            webDriver.get(prop.getProperty("environment.url"));
+            webDriver.get(prop.getProperty("external_dev_environment.url"));
             long duration = (System.currentTimeMillis() - start) / 1000;
             log.info("Page load time: {} seconds", duration);
 
