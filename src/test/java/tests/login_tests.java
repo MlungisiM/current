@@ -2,6 +2,7 @@ package tests;
 
 import actions.login_actions;
 import base.base_class;
+import org.apache.hc.core5.reactor.Command;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -12,10 +13,10 @@ public class login_tests extends base_class {
 
     login_actions login;
 
-    @BeforeMethod
+    @BeforeMethod()
     public void initPages() {
-        initDriver();
-        login = new login_actions(); // Now it's safe, driver is ready
+        initDriver();// Now it's safe, driver is ready
+        login = new login_actions();
     }
 
     @Test(testName = "Login Successfully")
