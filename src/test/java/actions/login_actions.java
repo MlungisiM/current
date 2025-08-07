@@ -38,6 +38,7 @@ public class login_actions extends base_class {
         }
 
         try {
+            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_username_textbox));
             _login_page.sso_username_textbox.click();
             _login_page.sso_username_textbox.sendKeys(sso_username);
             getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(30));

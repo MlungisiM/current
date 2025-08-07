@@ -56,6 +56,7 @@ public abstract class base_class extends DriverFactory {
     public void tearDown() {
         if (DriverFactory.getDriver() != null) {
             DriverFactory.getDriver().quit();
+            getDriver().manage().deleteAllCookies();
             DriverFactory.removeDriver();
         }
     }
