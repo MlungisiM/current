@@ -15,9 +15,9 @@ public class login_tests extends base_class {
 
     @BeforeMethod()
     public void initPages() throws Exception {
-        initDriver();           // Initialize driver
+        super.setUp();          // ✅ This initializes WebDriver properly
         login = new login_actions();
-        login.init();           // Initialize the page AFTER the driver is ready
+        login.init();           // ✅ Now getDriver() is not null
     }
 
     @Test(testName = "Login Successfully")

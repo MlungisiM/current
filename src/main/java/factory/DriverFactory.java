@@ -58,6 +58,7 @@ public class DriverFactory {
                 case "chrome" -> {
                     WebDriverManager.chromedriver().setup();
                     ChromeOptions chromeOptions = new ChromeOptions();
+                    chromeOptions.addArguments("--headless=new", "--disable-gpu", "--window-size=1920,1080");
                     //chromeOptions.addArguments("--headless=new");
                     webDriver = new ChromeDriver(chromeOptions);
                     log.info("Starting Chrome driver");
