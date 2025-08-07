@@ -31,7 +31,6 @@ public abstract class base_class extends DriverFactory {
     public static Logger log = LogManager.getLogger(base_class.class);
     private static final Properties prop = new Properties();
 
-    @BeforeMethod
     public void setUp() throws Exception {
         if (DriverFactory.prop == null || DriverFactory.prop.isEmpty()) {
             try (InputStream input = base_class.class
@@ -54,10 +53,15 @@ public abstract class base_class extends DriverFactory {
 
     @AfterMethod
     public void tearDown() {
-        if (DriverFactory.getDriver() != null) {
-            DriverFactory.getDriver().quit();
-            getDriver().manage().deleteAllCookies();
-            DriverFactory.removeDriver();
+        try {
+            WebDriver driver = DriverFactory.getDriver();
+            if (driver != null) {
+                getDriver().quit();
+                getDriver().manage().deleteAllCookies();
+                DriverFactory.removeDriver();
+            }
+        } catch (Exception e) {
+            log.warn("TearDown error (driver likely already quit): {}", e.getMessage());
         }
     }
 

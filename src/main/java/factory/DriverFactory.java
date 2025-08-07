@@ -42,9 +42,6 @@ public class DriverFactory {
         return getDriver(); // ✅ always return a usable driver
     }
 
-
-
-
     public static void launchBrowser() {
         String browserName = prop.getProperty("browser", "chrome").toLowerCase();
 
@@ -58,7 +55,13 @@ public class DriverFactory {
                 case "chrome" -> {
                     WebDriverManager.chromedriver().setup();
                     ChromeOptions chromeOptions = new ChromeOptions();
-                    chromeOptions.addArguments("--headless=new", "--disable-gpu", "--window-size=1920,1080");
+                    chromeOptions.addArguments(
+                            "--headless=new",
+                            "--disable-gpu",
+                            "--window-size=1920,1080",
+                            "--no-sandbox",
+                            "--disable-dev-shm-usage"
+                    );
                     //chromeOptions.addArguments("--headless=new");
                     webDriver = new ChromeDriver(chromeOptions);
                     log.info("Starting Chrome driver");

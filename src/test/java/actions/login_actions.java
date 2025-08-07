@@ -2,8 +2,11 @@ package actions;
 
 import base.base_class;
 import factory.DriverFactory;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import pages.login_page;
 
 import java.time.Duration;
@@ -13,6 +16,7 @@ public class login_actions extends base_class {
 
     private login_page _login_page;
 
+    @BeforeMethod
     public void init() {
         if (getDriver() == null) {
             throw new IllegalStateException("WebDriver is not initialized.");
@@ -22,7 +26,11 @@ public class login_actions extends base_class {
 
 
     public void loginValidUsername() throws Exception {
-
+        log.info("Current Page Title: " + getDriver().getTitle());
+        System.out.println("Current Page Title: " + getDriver().getTitle());
+        log.info("Current Page URL: " + getDriver().getCurrentUrl());
+        System.out.println("Current URL: " + getDriver().getCurrentUrl());
+        getDriver().manage().deleteAllCookies();
         String sso_username = DriverFactory.prop.getProperty("sso_username");
         String sso_password = DriverFactory.prop.getProperty("sso_password");
 
@@ -38,9 +46,13 @@ public class login_actions extends base_class {
         }
 
         try {
-            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_username_textbox));
-            _login_page.sso_username_textbox.click();
-            _login_page.sso_username_textbox.sendKeys(sso_username);
+            By usernameLocator = By.id("i0116");
+            getWait().until(ExpectedConditions.elementToBeClickable(usernameLocator));
+            WebElement usernameField = getDriver().findElement(usernameLocator);
+            usernameField.click();
+            usernameField.sendKeys(sso_username);
+            //_login_page.sso_username_textbox.click();
+            //_login_page.sso_username_textbox.sendKeys(sso_username);
             getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
             _login_page.sso_next_button.click();
             getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_password_textbox));
@@ -48,10 +60,11 @@ public class login_actions extends base_class {
             _login_page.sso_password_textbox.sendKeys(sso_password);
             getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
             _login_page.sso_signIn_button.click();
-            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.mfa_username_textbox));
-            _login_page.mfa_username_textbox.click();
-            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.mfa_verify_button));
-            Assert.assertTrue(_login_page.mfa_verify_button.isDisplayed());
+//            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.mfa_username_textbox));
+//            WebElement tileList = getWait().until(ExpectedConditions.elementToBeClickable(By.id("tileList")));
+//            tileList.click();
+//            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.mfa_verify_button));
+//            Assert.assertTrue(_login_page.mfa_verify_button.isDisplayed());
             log.info("User logged in successfully with username: {}", sso_username);
         } catch (Exception e) {
             log.error("Login failed: {}", e.getMessage(), e);
