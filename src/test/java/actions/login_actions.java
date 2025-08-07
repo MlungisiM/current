@@ -11,14 +11,15 @@ import java.time.Duration;
 
 public class login_actions extends base_class {
 
-    private final login_page _login_page;
+    private login_page _login_page;
 
-    public login_actions() {
+    public void init() {
         if (getDriver() == null) {
             throw new IllegalStateException("WebDriver is not initialized.");
         }
-        _login_page = new login_page(); // instantiate safely only when driver is ready
+        _login_page = new login_page();
     }
+
 
     public void loginValidUsername() throws Exception {
 

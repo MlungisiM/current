@@ -14,9 +14,10 @@ public class login_tests extends base_class {
     login_actions login;
 
     @BeforeMethod()
-    public void initPages() {
-        initDriver();// Now it's safe, driver is ready
+    public void initPages() throws Exception {
+        initDriver();           // Initialize driver
         login = new login_actions();
+        login.init();           // Initialize the page AFTER the driver is ready
     }
 
     @Test(testName = "Login Successfully")
