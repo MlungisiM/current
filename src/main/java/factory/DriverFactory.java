@@ -56,7 +56,7 @@ public class DriverFactory {
                     WebDriverManager.chromedriver().setup();
                     ChromeOptions chromeOptions = new ChromeOptions();
                     chromeOptions.addArguments(
-                            "--headless=new",
+                           // "--headless=new",
                             "--disable-gpu",
                             "--window-size=1920,1080",
                             "--no-sandbox",
