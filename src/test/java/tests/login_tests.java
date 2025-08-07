@@ -14,6 +14,7 @@ public class login_tests extends base_class {
 
     @BeforeMethod
     public void initPages() {
+        initDriver();
         login = new login_actions(); // Now it's safe, driver is ready
     }
 
