@@ -17,7 +17,12 @@ pool:
 variables:
   mavenOpts: '-Xmx1024m'
 
+  
+
+
+
 steps:
+
 
 # Step 1: Use Java 21
 - task: JavaToolInstaller@0
@@ -37,6 +42,9 @@ steps:
     goals: 'clean'
     options: '-B'
   displayName: 'Maven Clean'
+
+- script: xvfb-run --auto-servernum mvn test
+  displayName: Run tests with virtual display
 
 # Step 3: Fix Permissions (if needed)
 - script: |
