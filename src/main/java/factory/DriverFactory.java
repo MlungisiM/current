@@ -48,7 +48,6 @@ public class DriverFactory {
         // Configure Jenkins CSP (optional - move if not always needed)
         System.setProperty("hudson.model.DirectoryBrowserSupport.CSP",
                 "sandbox allow-scripts; default-src 'self'; script-src * 'unsafe-eval'; img-src *; style-src * 'unsafe-inline'; font-src *");
-
         try {
             WebDriver webDriver;
             switch (browserName) {
