@@ -53,12 +53,12 @@ public class login_actions extends base_class {
             usernameField.sendKeys(sso_username);
             //_login_page.sso_username_textbox.click();
             //_login_page.sso_username_textbox.sendKeys(sso_username);
-            getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
+            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_next_button));
             _login_page.sso_next_button.click();
             getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_password_textbox));
             _login_page.sso_password_textbox.click();
             _login_page.sso_password_textbox.sendKeys(sso_password);
-            getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
+            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_signIn_button));
             _login_page.sso_signIn_button.click();
 //            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.mfa_username_textbox));
 //            WebElement tileList = getWait().until(ExpectedConditions.elementToBeClickable(By.id("tileList")));
