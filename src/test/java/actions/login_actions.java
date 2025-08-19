@@ -30,47 +30,41 @@ public class login_actions extends base_class {
         System.out.println("Current Page Title: " + getDriver().getTitle());
         log.info("Current Page URL: " + getDriver().getCurrentUrl());
         System.out.println("Current URL: " + getDriver().getCurrentUrl());
-        getDriver().manage().deleteAllCookies();
-        String sso_username = DriverFactory.prop.getProperty("sso_username");
-        String sso_password = DriverFactory.prop.getProperty("sso_password");
-
-        String cregalink_username = DriverFactory.prop.getProperty("sso_username");
-        String cregalink_password = getProperty("sso_password");
-
-        if (sso_username == null || sso_username.isEmpty() || cregalink_username == null || cregalink_username.isEmpty()) {
-            log.error("Username is missing in properties file.");
-            throw new IllegalStateException("Missing required property: username");
-        } else if (sso_password == null || sso_password.isEmpty()) {
-            log.error("Password is missing in properties file.");
-            throw new IllegalStateException("Missing required property: username");
-        }
-
-        try {
-            By usernameLocator = By.id("i0116");
-            getWait().until(ExpectedConditions.elementToBeClickable(usernameLocator));
-            WebElement usernameField = getDriver().findElement(usernameLocator);
-            usernameField.click();
-            usernameField.sendKeys(sso_username);
-            //_login_page.sso_username_textbox.click();
-            //_login_page.sso_username_textbox.sendKeys(sso_username);
-            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_next_button));
-            _login_page.sso_next_button.click();
-            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_password_textbox));
-            _login_page.sso_password_textbox.click();
-            _login_page.sso_password_textbox.sendKeys(sso_password);
-            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_signIn_button));
-            _login_page.sso_signIn_button.click();
-//            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.mfa_username_textbox));
-//            WebElement tileList = getWait().until(ExpectedConditions.elementToBeClickable(By.id("tileList")));
-//            tileList.click();
-//            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.mfa_verify_button));
-//            Assert.assertTrue(_login_page.mfa_verify_button.isDisplayed());
-            log.info("User logged in successfully with username: {}", sso_username);
-        } catch (Exception e) {
-            log.error("Login failed: {}", e.getMessage(), e);
-            throw e;
-        }
     }
+//        getDriver().manage().deleteAllCookies();
+//        String sso_username = DriverFactory.prop.getProperty("sso_username");
+//        String sso_password = DriverFactory.prop.getProperty("sso_password");
+//
+//        String cregalink_username = DriverFactory.prop.getProperty("sso_username");
+//        String cregalink_password = getProperty("sso_password");
+//
+//        if (sso_username == null || sso_username.isEmpty() || cregalink_username == null || cregalink_username.isEmpty()) {
+//            log.error("Username is missing in properties file.");
+//            throw new IllegalStateException("Missing required property: username");
+//        } else if (sso_password == null || sso_password.isEmpty()) {
+//            log.error("Password is missing in properties file.");
+//            throw new IllegalStateException("Missing required property: username");
+//        }
+//
+//        try {
+//            By usernameLocator = By.id("i0116");
+//            getWait().until(ExpectedConditions.elementToBeClickable(usernameLocator));
+//            WebElement usernameField = getDriver().findElement(usernameLocator);
+//            usernameField.click();
+//            usernameField.sendKeys(sso_username);
+//            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_next_button));
+//            _login_page.sso_next_button.click();
+//            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_password_textbox));
+//            _login_page.sso_password_textbox.click();
+//            _login_page.sso_password_textbox.sendKeys(sso_password);
+//            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_signIn_button));
+//            _login_page.sso_signIn_button.click();
+//            log.info("User logged in successfully with username: {}", sso_username);
+//        } catch (Exception e) {
+//            log.error("Login failed: {}", e.getMessage(), e);
+//            throw e;
+//        }
+//    }
 
 //    public void loginIncorrectUsername() {
 //

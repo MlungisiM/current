@@ -15,7 +15,7 @@
 
         <selenium.version>4.21.0</selenium.version>
         <testng.version>7.9.0</testng.version>
-        <webdrivermanager.version>5.8.0</webdrivermanager.version>
+        <webdrivermanager.version>6.2.0</webdrivermanager.version>
         <extentreports.version>5.1.1</extentreports.version>
         <log4j.version>2.25.1</log4j.version>
     </properties>
@@ -78,20 +78,6 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${log4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId> <!-- or log4j, logback, etc. -->
-            <version>2.0.9</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.5.18</version>
-            <scope>compile</scope>
         </dependency>
 
 
