@@ -108,6 +108,7 @@ steps:
       echo "##[section]Surefire Reports: $(Build.ArtifactStagingDirectory)/artifacts/reports/surefire/"
       echo "##[section]================================"
       
+      
       # Generate direct link to Extent Report
       echo "##vso[task.setvariable variable=REPORT_URL;isOutput=true]$(Pipeline.Workspace)/Test_Artifacts/reports/automation-report.html"
     displayName: 'Generate Artifact Links'
