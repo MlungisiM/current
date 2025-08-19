@@ -1,89 +1,47 @@
 trigger:
   branches:
     include:
-      - "*"  # Runs on every branch commit
+      - main   # Run on every commit to main branch
 
 schedules:
-  - cron: "0 6 * * *"  # 8 AM SAST = 6 AM UTC
-    displayName: Daily Build at 8AM SAST
+  - cron: "0 8 * * *"   # Run every day at 8 AM UTC
+    displayName: Daily 8AM Run
     branches:
       include:
         - main
-    always: true  # Run even if no changes
+    always: true   # Run even if no code changes
 
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  mavenOpts: '-Xmx1024m'
-
-  
-
-
-
 steps:
+  # Install Java 21
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: '21'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
 
+  # Run Maven build & tests
+  - task: Maven@4
+    inputs:
+      mavenPomFile: 'pom.xml'
+      goals: 'clean test'
+      publishJUnitResults: true
+      testResultsFiles: '**/target/surefire-reports/TEST-*.xml'
+      javaHomeOption: 'Path'
+      mavenVersionOption: 'Default'
 
-# Step 1: Use Java 21
-- task: JavaToolInstaller@0
-  inputs:
-    versionSpec: '21'
-    jdkArchitectureOption: 'x64'
-    jdkSourceOption: 'PreInstalled'
-  displayName: 'Set up Java 21'
+  # Publish ExtentReports folder as artifact (downloadable)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: 'reports'
+      ArtifactName: 'ExtentReports'
+      publishLocation: 'Container'
 
-- script: java -version
-  displayName: 'Check Java Version'
-
-# Step 2: Clean Project
-- task: Maven@4
-  inputs:
-    mavenPomFile: 'pom.xml'
-    goals: 'clean'
-    options: '-B'
-  displayName: 'Maven Clean'
-
-- script: xvfb-run --auto-servernum mvn test
-  displayName: Run tests with virtual display
-
-# Step 3: Fix Permissions (if needed)
-- script: |
-    sudo chmod -R 777 $(System.DefaultWorkingDirectory)/target || true
-  displayName: 'Fix target directory permissions'
-
-# Step 4: Run Tests using testng.xml
-- task: Maven@4
-  inputs:
-    mavenPomFile: 'pom.xml'
-    goals: 'test'
-    options: '-B -DsuiteXmlFile=testng.xml'
-  displayName: 'Run Tests using testng.xml'
-
-- script: |
-    echo "Checking for report..."
-    ls -la $(System.DefaultWorkingDirectory)/reports
-    echo "Checking root just in case..."
-    ls -la /reports
-  displayName: 'Debug: Check report location'
-
-# Step 5: Publish HTML Report (e.g., ExtentReports)
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(System.DefaultWorkingDirectory)/reports'
-    artifact: 'automation-report.html'
-    publishLocation: 'pipeline'
-  displayName: 'Publish Extent Report (Pipeline Artifact)'
-
-
-  # Step 6: Prevent pipeline from failing if report is missing
-#- task: PublishBuildArtifacts@1
- # inputs:
-    #PathtoPublish: '$(System.DefaultWorkingDirectory)/reports'
-   # ArtifactName: 'automation-report.html'
-   # publishLocation: 'Container'
-  #displayName: 'Publish Extent Report'
-  #continueOnError: true
-
-
-  
-
+  # Publish automation-report.html to pipeline summary
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: 'reports/automation-report.html'
+      artifact: 'AutomationReport'
+      publishLocation: 'pipeline'
