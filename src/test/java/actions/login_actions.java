@@ -28,7 +28,6 @@ public class login_actions extends base_class {
     public void loginValidUsername() throws Exception {
         log.info("Current Page URL: " + getDriver().getCurrentUrl());
         System.out.println("Current URL: " + getDriver().getCurrentUrl());
-        WaitForPageLoad(5);
         log.info("Current Page Title: " + getDriver().getTitle());
         System.out.println("Current Page Title: " + getDriver().getTitle());
     }
