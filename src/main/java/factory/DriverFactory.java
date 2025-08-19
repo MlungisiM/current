@@ -79,7 +79,6 @@ public class DriverFactory {
                 }
                 default -> throw new IllegalArgumentException("Unsupported browser: " + browserName);
             }
-
             setDriver(webDriver);
 
             long start = System.currentTimeMillis();
