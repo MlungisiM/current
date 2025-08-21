@@ -64,6 +64,9 @@ public class DriverFactory {
                     chromeOptions.addArguments("--remote-allow-origins=*");
                     chromeOptions.addArguments("--disable-dev-shm-usage");
                     chromeOptions.addArguments("--no-sandbox");
+                    chromeOptions.addArguments("--headless=new");
+                    chromeOptions.addArguments("--disable-gpu");
+                    chromeOptions.addArguments("--window-size=1920,1080");
                     if (isHeadless) chromeOptions.addArguments("--headless=new");
                     driver.set(new ChromeDriver(chromeOptions));
                     log.info("Chrome driver started");
@@ -91,7 +94,7 @@ public class DriverFactory {
 
             long startTime = System.currentTimeMillis();
             getDriver().get(prop.getProperty("external_dev_environment.url"));
-            getDriver().manage().window().maximize();
+            //getDriver().manage().window().maximize();
             getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
             actions = new Actions(driver.get());
             long totalTime = (System.currentTimeMillis() - startTime) / 1000;
