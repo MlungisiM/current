@@ -46,10 +46,10 @@ public class DriverFactory {
         String browserName = prop.getProperty("browser").toLowerCase();
         boolean isHeadless = Boolean.parseBoolean(prop.getProperty("headless", "true"));
 
-//        // Set Hudson CSP properties
-//        System.clearProperty("hudson.model.DirectoryBrowserSupport.CSP");
-//        System.setProperty("hudson.model.DirectoryBrowserSupport.CSP",
-//                "sandbox allow-scripts; default-src 'self'; script-src * 'unsafe-eval'; img-src *; style-src * 'unsafe-inline'; font-src *");
+        // Set Hudson CSP properties
+        System.clearProperty("hudson.model.DirectoryBrowserSupport.CSP");
+        System.setProperty("hudson.model.DirectoryBrowserSupport.CSP",
+                "sandbox allow-scripts; default-src 'self'; script-src * 'unsafe-eval'; img-src *; style-src * 'unsafe-inline'; font-src *");
 
         try {
             switch (browserName) {
@@ -57,14 +57,12 @@ public class DriverFactory {
                     WebDriverManager.chromedriver().setup();
                     ChromeOptions chromeOptions = new ChromeOptions();
                     // Create unique user data directory
-                    String userDataDir = "/tmp/chrome_profile_" + UUID.randomUUID().toString();
-                    chromeOptions.addArguments("--user-data-dir=" + userDataDir);
+//                    String userDataDir = "/tmp/chrome_profile_" + UUID.randomUUID().toString();
+//                    chromeOptions.addArguments("--user-data-dir=" + userDataDir);
                     // Other common options
                     chromeOptions.addArguments("--disable-notifications");
                     chromeOptions.addArguments("--remote-allow-origins=*");
                     chromeOptions.addArguments("--disable-dev-shm-usage");
-                    chromeOptions.addArguments("--no-sandbox");
-                    chromeOptions.addArguments("--headless=new");
                     chromeOptions.addArguments("--disable-gpu");
                     if (isHeadless) chromeOptions.addArguments("--headless=new");
                     driver.set(new ChromeDriver(chromeOptions));
