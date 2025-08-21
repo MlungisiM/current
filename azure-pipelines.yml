@@ -29,8 +29,25 @@ steps:
 - script: |
     echo "🔍 Checking reachability of test environment..."
     echo "Target URL: $(external_dev_environment_url)"
-    nslookup www.devcregalink.co.za || true
-    curl -vk --max-time 20 $(external_dev_environment_url)
+
+    # Extract hostname from full URL (www.devcregalink.co.za)
+    HOSTNAME=$(echo $(external_dev_environment_url) | awk -F/ '{print $3}')
+    echo "Checking DNS resolution for $HOSTNAME"
+
+    if nslookup $HOSTNAME; then
+      echo "✅ DNS resolved for $HOSTNAME"
+    else
+      echo "❌ DNS resolution failed for $HOSTNAME"
+      exit 1
+    fi
+
+    echo "🌐 Checking HTTP reachability for full URL: $(external_dev_environment_url)"
+    if curl -vk --max-time 20 --fail $(external_dev_environment_url); then
+      echo "✅ Environment is reachable"
+    else
+      echo "❌ Test environment not reachable at $(external_dev_environment_url). Aborting tests."
+      exit 1
+    fi
   displayName: "Test environment reachability"
 
 - task: JavaToolInstaller@0
@@ -65,7 +82,8 @@ steps:
       mvn clean test \
       -Dtestng.output.dir=$(TESTNG_RESULTS) \
       -Dfile.encoding=UTF-8 \
-      -Dsurefire.reportsDirectory=$(System.DefaultWorkingDirectory)/target/surefire-reports
+      -Dsurefire.reportsDirectory=$(System.DefaultWorkingDirectory)/target/surefire-reports \
+      -DbaseUrl=$(external_dev_environment_url)
   displayName: 'Run TestNG Tests'
 
 - script: |
