@@ -92,14 +92,7 @@ public class DriverFactory {
             }
 
             long startTime = System.currentTimeMillis();
-            // Use URL from pipeline if provided, else fallback
-            String baseUrl = System.getProperty("baseUrl");
-            if (baseUrl == null || baseUrl.isEmpty()) {
-                baseUrl = prop.getProperty("external_dev_environment.url");
-            }
-            log.info("Navigating to URL: {}", baseUrl);
-
-            getDriver().get(baseUrl);
+            getDriver().get(prop.getProperty("external_dev_environment.url"));
             getDriver().manage().window().maximize();
             getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
             actions = new Actions(driver.get());
