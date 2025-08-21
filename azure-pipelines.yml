@@ -8,10 +8,10 @@ trigger:
 schedules:
   - cron: "0 6 * * *"  # 8am SAST is 6am UTC
     displayName: Daily test run
+    always: true
     branches:
       include:
         - main
-    always: true
 
 variables:
   JAVA_HOME: /usr/lib/jvm/java-21-openjdk
@@ -19,22 +19,18 @@ variables:
   EXTENT_REPORT: "target/reports/automation-report.html"
   SCREENSHOTS_DIR: "target/reports/screenshots"
   TESTNG_RESULTS: "target/testng-output"
-  # Full URL for Selenium framework, forcing HTTPS
   external_dev_environment_url: "https://www.devcregalink.co.za/cregaweb/faces/index.xhtml"
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-
-  # Install Java
   - task: JavaToolInstaller@0
     inputs:
       versionSpec: '21'
       jdkArchitectureOption: 'x64'
       jdkSourceOption: 'PreInstalled'
 
-  # Configure Maven
   - script: |
       mkdir -p ~/.m2
       cat > ~/.m2/settings.xml << 'EOF'
@@ -51,12 +47,9 @@ steps:
       EOF
     displayName: 'Configure Secure Maven'
 
-  # Prepare TestNG directory
-  - script: |
-      mkdir -p $(TESTNG_RESULTS)
+  - script: mkdir -p $(TESTNG_RESULTS)
     displayName: 'Prepare TestNG directory'
 
-  # Run Selenium/TestNG tests
   - task: CmdLine@2
     inputs:
       script: |
@@ -67,10 +60,8 @@ steps:
         -DbaseUrl=$(external_dev_environment_url)
     displayName: 'Run TestNG Tests'
 
-  # Collect artifacts (reports, screenshots)
   - script: |
       mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots}
-      
-      # Copy Extent Report
       if [ -f "$(EXTENT_REPORT)" ]; then
         cp "$(EXTENT_REPORT)" $(Build.ArtifactStagingDirectory)/artifacts/reports/
+    displayName: 'Collect Artifacts'
