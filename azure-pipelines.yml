@@ -1,67 +1,87 @@
 name: $(Date:yyyyMMdd)$(Rev:.r)
-
 trigger:
   branches:
     include:
-      - main
-
+    - main
 schedules:
-  - cron: "0 6 * * *"  # 8am SAST is 6am UTC
-    displayName: Daily test run
-    always: true
-    branches:
-      include:
-        - main
-
+- cron: "0 6 * * *"
+  displayName: Daily test run
+  always: true
+  branches:
+    include:
+    - main
 variables:
-  JAVA_HOME: /usr/lib/jvm/java-21-openjdk
-  MAVEN_OPTS: -Dfile.encoding=UTF-8
-  EXTENT_REPORT: "target/reports/automation-report.html"
-  SCREENSHOTS_DIR: "target/reports/screenshots"
-  TESTNG_RESULTS: "target/testng-output"
-  external_dev_environment_url: "https://www.devcregalink.co.za/cregaweb/faces/index.xhtml"
-
-pool:
-  vmImage: 'ubuntu-latest'
-
-steps:
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: '21'
-      jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'PreInstalled'
-
-  - script: |
-      mkdir -p ~/.m2
-      cat > ~/.m2/settings.xml << 'EOF'
-      <settings>
-        <mirrors>
-          <mirror>
-            <id>secure-central</id>
-            <name>Maven Central</name>
-            <url>https://repo.maven.apache.org/maven2</url>
-            <mirrorOf>central</mirrorOf>
-          </mirror>
-        </mirrors>
-      </settings>
-      EOF
-    displayName: 'Configure Secure Maven'
-
-  - script: mkdir -p $(TESTNG_RESULTS)
-    displayName: 'Prepare TestNG directory'
-
-  - task: CmdLine@2
-    inputs:
-      script: |
-        mvn clean test \
-        -Dtestng.output.dir=$(TESTNG_RESULTS) \
-        -Dfile.encoding=UTF-8 \
-        -Dsurefire.reportsDirectory=$(System.DefaultWorkingDirectory)/target/surefire-reports \
-        -DbaseUrl=$(external_dev_environment_url)
-    displayName: 'Run TestNG Tests'
-
-  - script: |
-      mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots}
-      if [ -f "$(EXTENT_REPORT)" ]; then
-        cp "$(EXTENT_REPORT)" $(Build.ArtifactStagingDirectory)/artifacts/reports/
-    displayName: 'Collect Artifacts'
+- name: JAVA_HOME
+  value: /usr/lib/jvm/java-21-openjdk
+- name: MAVEN_OPTS
+  value: -Dfile.encoding=UTF-8
+- name: EXTENT_REPORT
+  value: "target/reports/automation-report.html"
+- name: SCREENSHOTS_DIR
+  value: "target/reports/screenshots"
+- name: TESTNG_RESULTS
+  value: "target/testng-output"
+- name: external_dev_environment_url
+  value: "https://www.devcregalink.co.za/cregaweb/faces/index.xhtml"
+stages:
+- stage: __default
+  jobs:
+  - job: Job
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: JavaToolInstaller@0
+      inputs:
+        versionSpec: '21'
+        jdkArchitectureOption: 'x64'
+        jdkSourceOption: 'PreInstalled'
+    - task: CmdLine@2
+      displayName: 'Configure Secure Maven'
+      inputs:
+        script: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml << 'EOF'
+          <settings>
+            <mirrors>
+              <mirror>
+                <id>secure-central</id>
+                <name>Maven Central</name>
+                <url>https://repo.maven.apache.org/maven2</url>
+                <mirrorOf>central</mirrorOf>
+              </mirror>
+            </mirrors>
+          </settings>
+          EOF
+    - task: CmdLine@2
+      displayName: 'Prepare TestNG directory'
+      inputs:
+        script: mkdir -p $(TESTNG_RESULTS)
+    - task: CmdLine@2
+      inputs:
+        script: |
+          mvn clean test \
+          -Dtestng.output.dir=$(TESTNG_RESULTS) \
+          -Dfile.encoding=UTF-8 \
+          -Dsurefire.reportsDirectory=$(System.DefaultWorkingDirectory)/target/surefire-reports \
+          -DbaseUrl=$(external_dev_environment_url)
+      displayName: 'Run TestNG Tests'
+    - task: CmdLine@2
+      displayName: 'Collect Artifacts'
+      inputs:
+        script: |
+          mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots}
+          if [ -f "$(EXTENT_REPORT)" ]; then
+            cp "$(EXTENT_REPORT)" $(Build.ArtifactStagingDirectory)/artifacts/reports/
+          fi
+          if [ -d "$(SCREENSHOTS_DIR)" ]; then
+            cp -r "$(SCREENSHOTS_DIR)" $(Build.ArtifactStagingDirectory)/artifacts/screenshots/
+          fi
+          if [ -d "$(TESTNG_RESULTS)" ]; then
+            cp -r "$(TESTNG_RESULTS)" $(Build.ArtifactStagingDirectory)/artifacts/
+          fi
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifacts'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts'
+        ArtifactName: 'test-results'
+        publishLocation: 'Container'
