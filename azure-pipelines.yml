@@ -1,8 +1,10 @@
 name: $(Date:yyyyMMdd)$(Rev:.r)
+
 trigger:
   branches:
     include:
     - main
+
 schedules:
 - cron: "0 6 * * *"
   displayName: Daily test run
@@ -10,31 +12,37 @@ schedules:
   branches:
     include:
     - main
+
 variables:
 - name: JAVA_HOME
   value: /usr/lib/jvm/java-21-openjdk
 - name: MAVEN_OPTS
   value: -Dfile.encoding=UTF-8
 - name: EXTENT_REPORT
-  value: "target/reports/automation-report.html"
+  value: "target/reports/automation-results.html"  # Updated to automation-results.html
 - name: SCREENSHOTS_DIR
   value: "target/reports/screenshots"
 - name: TESTNG_RESULTS
   value: "target/testng-output"
 - name: external_dev_environment_url
   value: "https://www.devcregalink.co.za/cregaweb/faces/index.xhtml"
+
 stages:
-- stage: __default
+- stage: Test
   jobs:
-  - job: Job
+  - job: Run_Tests
     pool:
       vmImage: 'ubuntu-latest'
     steps:
+    # Install Java
     - task: JavaToolInstaller@0
       inputs:
         versionSpec: '21'
         jdkArchitectureOption: 'x64'
         jdkSourceOption: 'PreInstalled'
+      displayName: 'Install Java 21'
+
+    # Configure Maven
     - task: CmdLine@2
       displayName: 'Configure Secure Maven'
       inputs:
@@ -52,11 +60,19 @@ stages:
             </mirrors>
           </settings>
           EOF
+
+    # Prepare directories
     - task: CmdLine@2
-      displayName: 'Prepare TestNG directory'
+      displayName: 'Prepare Test Directories'
       inputs:
-        script: mkdir -p $(TESTNG_RESULTS)
+        script: |
+          mkdir -p $(TESTNG_RESULTS)
+          mkdir -p target/reports
+          mkdir -p target/screenshots
+
+    # Run Tests with continueOnError to ensure artifacts are collected even if tests fail
     - task: CmdLine@2
+      displayName: 'Run TestNG Tests'
       inputs:
         script: |
           mvn clean test \
@@ -64,24 +80,73 @@ stages:
           -Dfile.encoding=UTF-8 \
           -Dsurefire.reportsDirectory=$(System.DefaultWorkingDirectory)/target/surefire-reports \
           -DbaseUrl=$(external_dev_environment_url)
-      displayName: 'Run TestNG Tests'
+        failOnStderr: false
+        continueOnError: true
+
+    # Publish Test Results (JUnit format from surefire reports)
+    - task: PublishTestResults@2
+      displayName: 'Publish Test Results'
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/surefire-reports/*.xml'
+        mergeTestResults: true
+        testRunTitle: 'TestNG Test Results'
+        failTaskOnFailedTests: false
+
+    # Collect Artifacts
     - task: CmdLine@2
       displayName: 'Collect Artifacts'
       inputs:
         script: |
-          mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots}
+          mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots,testng-results}
+          
+          # Copy Extent Report if exists - UPDATED NAME
           if [ -f "$(EXTENT_REPORT)" ]; then
+            echo "Copying Extent report: $(EXTENT_REPORT)"
             cp "$(EXTENT_REPORT)" $(Build.ArtifactStagingDirectory)/artifacts/reports/
+          else
+            echo "Extent report not found: $(EXTENT_REPORT)"
+            echo "Available files in target/reports/:"
+            ls -la target/reports/ 2>/dev/null || echo "target/reports/ directory does not exist"
           fi
+          
+          # Copy Screenshots directory if exists
           if [ -d "$(SCREENSHOTS_DIR)" ]; then
-            cp -r "$(SCREENSHOTS_DIR)" $(Build.ArtifactStagingDirectory)/artifacts/screenshots/
+            echo "Copying screenshots from: $(SCREENSHOTS_DIR)"
+            cp -r "$(SCREENSHOTS_DIR)/"* $(Build.ArtifactStagingDirectory)/artifacts/screenshots/ 2>/dev/null || true
+          else
+            echo "Screenshots directory not found: $(SCREENSHOTS_DIR)"
           fi
+          
+          # Copy TestNG results if exists
           if [ -d "$(TESTNG_RESULTS)" ]; then
-            cp -r "$(TESTNG_RESULTS)" $(Build.ArtifactStagingDirectory)/artifacts/
+            echo "Copying TestNG results from: $(TESTNG_RESULTS)"
+            cp -r "$(TESTNG_RESULTS)/"* $(Build.ArtifactStagingDirectory)/artifacts/testng-results/ 2>/dev/null || true
+          else
+            echo "TestNG results directory not found: $(TESTNG_RESULTS)"
           fi
+          
+          # Copy surefire reports if exists
+          if [ -d "target/surefire-reports" ]; then
+            echo "Copying surefire reports"
+            cp -r target/surefire-reports $(Build.ArtifactStagingDirectory)/artifacts/ 2>/dev/null || true
+          else
+            echo "Surefire reports directory not found: target/surefire-reports"
+          fi
+
+    # Publish Build Artifacts
     - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifacts'
+      displayName: 'Publish All Artifacts'
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts'
         ArtifactName: 'test-results'
         publishLocation: 'Container'
+
+    # Optional: Publish HTML reports as a separate artifact for better viewing
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish HTML Reports'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/reports'
+        ArtifactName: 'html-reports'
+        publishLocation: 'Container'
+      condition: succeededOrFailed()
