@@ -26,36 +26,39 @@ pool:
 
 steps:
 
+# 🔍 Full URL reachability check
 - script: |
-    echo "🔍 Checking reachability of test environment..."
+    echo "🔍 Checking reachability of full URL..."
     echo "Target URL: $(external_dev_environment_url)"
 
-    # Extract hostname from full URL (www.devcregalink.co.za)
+    # Extract hostname from full URL
     HOSTNAME=$(echo $(external_dev_environment_url) | awk -F/ '{print $3}')
-    echo "Checking DNS resolution for $HOSTNAME"
+    echo "Step 1: DNS resolution for host in full URL ($HOSTNAME)..."
 
     if nslookup $HOSTNAME; then
-      echo "✅ DNS resolved for $HOSTNAME"
+      echo "✅ DNS resolved for host $HOSTNAME"
     else
-      echo "❌ DNS resolution failed for $HOSTNAME"
+      echo "❌ DNS resolution failed for host $HOSTNAME"
       exit 1
     fi
 
-    echo "🌐 Checking HTTP reachability for full URL: $(external_dev_environment_url)"
+    echo "Step 2: HTTP connectivity for full URL $(external_dev_environment_url)..."
     if curl -vk --max-time 20 --fail $(external_dev_environment_url); then
-      echo "✅ Environment is reachable"
+      echo "✅ Full URL is reachable: $(external_dev_environment_url)"
     else
-      echo "❌ Test environment not reachable at $(external_dev_environment_url). Aborting tests."
+      echo "❌ Full URL not reachable: $(external_dev_environment_url). Aborting tests."
       exit 1
     fi
-  displayName: "Test environment reachability"
+  displayName: "Full URL reachability check"
 
+# Install Java
 - task: JavaToolInstaller@0
   inputs:
     versionSpec: '21'
     jdkArchitectureOption: 'x64'
     jdkSourceOption: 'PreInstalled'
 
+# Configure Maven
 - script: |
     mkdir -p ~/.m2
     cat > ~/.m2/settings.xml << 'EOF'
@@ -72,10 +75,12 @@ steps:
     EOF
   displayName: 'Configure Secure Maven'
 
+# Prepare TestNG directory
 - script: |
     mkdir -p $(TESTNG_RESULTS)
   displayName: 'Prepare TestNG directory'
 
+# Run Selenium/TestNG tests
 - task: CmdLine@2
   inputs:
     script: |
@@ -86,6 +91,7 @@ steps:
       -DbaseUrl=$(external_dev_environment_url)
   displayName: 'Run TestNG Tests'
 
+# Collect artifacts (reports, screenshots)
 - script: |
     mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots}
     
@@ -111,6 +117,7 @@ steps:
     fi
   displayName: 'Collect Test Artifacts'
 
+# Publish Test Results
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
@@ -119,6 +126,7 @@ steps:
     mergeTestResults: true
     testRunTitle: 'TestNG Results'
 
+# Publish Build Artifacts
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts'
