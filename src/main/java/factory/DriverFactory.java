@@ -82,7 +82,7 @@ public class DriverFactory {
             setDriver(webDriver);
 
             long start = System.currentTimeMillis();
-            webDriver.get(prop.getProperty("external_dev_environment.url"));
+            webDriver.get(prop.getProperty("prod_environment.url"));
             long duration = (System.currentTimeMillis() - start) / 1000;
             log.info("Page load time: {} seconds", duration);
 
