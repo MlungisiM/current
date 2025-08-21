@@ -19,9 +19,9 @@ variables:
 - name: MAVEN_OPTS
   value: -Dfile.encoding=UTF-8
 - name: EXTENT_REPORT
-  value: "target/reports/automation-results.html"  # Updated to automation-results.html
+  value: "reports/automation-results.html"  # Updated to reports/ folder
 - name: SCREENSHOTS_DIR
-  value: "target/reports/screenshots"
+  value: "reports/screenshots"
 - name: TESTNG_RESULTS
   value: "target/testng-output"
 - name: external_dev_environment_url
@@ -53,7 +53,7 @@ stages:
             <mirrors>
               <mirror>
                 <id>secure-central</id>
-                <name>Maven Central</name>
+                <name> Maven Central</name>
                 <url>https://repo.maven.apache.org/maven2</url>
                 <mirrorOf>central</mirrorOf>
               </mirror>
@@ -67,8 +67,8 @@ stages:
       inputs:
         script: |
           mkdir -p $(TESTNG_RESULTS)
-          mkdir -p target/reports
-          mkdir -p target/screenshots
+          mkdir -p reports
+          mkdir -p reports/screenshots
 
     # Run Tests with continueOnError to ensure artifacts are collected even if tests fail
     - task: CmdLine@2
@@ -100,17 +100,17 @@ stages:
         script: |
           mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots,testng-results}
           
-          # Copy Extent Report if exists - UPDATED NAME
+          # Copy Extent Report from reports/ folder
           if [ -f "$(EXTENT_REPORT)" ]; then
             echo "Copying Extent report: $(EXTENT_REPORT)"
             cp "$(EXTENT_REPORT)" $(Build.ArtifactStagingDirectory)/artifacts/reports/
           else
             echo "Extent report not found: $(EXTENT_REPORT)"
-            echo "Available files in target/reports/:"
-            ls -la target/reports/ 2>/dev/null || echo "target/reports/ directory does not exist"
+            echo "Available files in reports/:"
+            ls -la reports/ 2>/dev/null || echo "reports/ directory does not exist"
           fi
           
-          # Copy Screenshots directory if exists
+          # Copy Screenshots directory from reports/ folder
           if [ -d "$(SCREENSHOTS_DIR)" ]; then
             echo "Copying screenshots from: $(SCREENSHOTS_DIR)"
             cp -r "$(SCREENSHOTS_DIR)/"* $(Build.ArtifactStagingDirectory)/artifacts/screenshots/ 2>/dev/null || true
@@ -142,7 +142,7 @@ stages:
         ArtifactName: 'test-results'
         publishLocation: 'Container'
 
-    # Optional: Publish HTML reports as a separate artifact for better viewing
+    # Publish HTML reports as a separate artifact
     - task: PublishBuildArtifacts@1
       displayName: 'Publish HTML Reports'
       inputs:
