@@ -66,7 +66,6 @@ public class DriverFactory {
                     chromeOptions.addArguments("--no-sandbox");
                     chromeOptions.addArguments("--headless=new");
                     chromeOptions.addArguments("--disable-gpu");
-                    chromeOptions.addArguments("--window-size=1920,1080");
                     if (isHeadless) chromeOptions.addArguments("--headless=new");
                     driver.set(new ChromeDriver(chromeOptions));
                     log.info("Chrome driver started");
@@ -93,9 +92,15 @@ public class DriverFactory {
             }
 
             long startTime = System.currentTimeMillis();
-            getDriver().get("https://www.devcregalink.co.za/cregaweb/faces/index.xhtml");
-            //getDriver().get(prop.getProperty("external_dev_environment.url"));
-            //getDriver().manage().window().maximize();
+            // Use URL from pipeline if provided, else fallback
+            String baseUrl = System.getProperty("baseUrl");
+            if (baseUrl == null || baseUrl.isEmpty()) {
+                baseUrl = prop.getProperty("external_dev_environment.url");
+            }
+            log.info("Navigating to URL: {}", baseUrl);
+
+            getDriver().get(baseUrl);
+            getDriver().manage().window().maximize();
             getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
             actions = new Actions(driver.get());
             long totalTime = (System.currentTimeMillis() - startTime) / 1000;
@@ -106,9 +111,4 @@ public class DriverFactory {
             throw e;
         }
     }
-        private static boolean isCIEnvironment() {
-            return System.getenv("TF_BUILD") != null ||
-                    System.getenv("CI") != null ||
-                    System.getenv("JENKINS_HOME") != null;
-        }
-    }
+}
