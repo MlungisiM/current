@@ -166,8 +166,4 @@ public abstract class base_class extends DriverFactory {
             throw new UserDefinedException("WebPage is taking time to process. Max Wait time for element display " + MaxWaitTime);
         }
     }
-
-
-
-
 }

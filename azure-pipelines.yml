@@ -1,5 +1,4 @@
 name: $(Date:yyyyMMdd)$(Rev:.r)
-
 trigger:
   branches:
     include:
@@ -19,9 +18,10 @@ variables:
   EXTENT_REPORT: "target/reports/automation-report.html"
   SCREENSHOTS_DIR: "target/reports/screenshots"
   TESTNG_RESULTS: "target/testng-output"
+  CONFIG_FILES: "target/classes/web_config.properties"
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-latest'  # or 'windows-latest'
 
 steps:
   - task: JavaToolInstaller@0
@@ -31,56 +31,57 @@ steps:
       jdkSourceOption: 'PreInstalled'
 
   - script: |
-      mkdir -p ~/.m2
-      cat > ~/.m2/settings.xml << 'EOF'
-      <settings>
-        <mirrors>
-          <mirror>
-            <id>secure-central</id>
-            <name>Maven Central</name>
-            <url>https://repo.maven.apache.org/maven2</url>
-            <mirrorOf>central</mirrorOf>
-          </mirror>
-        </mirrors>
-      </settings>
-      EOF
-    displayName: 'Configure Secure Maven'
-
-  - script: |
+      # Create TestNG output directory
       mkdir -p $(TESTNG_RESULTS)
     displayName: 'Prepare TestNG directory'
 
-  - task: CmdLine@2
+  - task: Maven@3
     inputs:
-      script: |
-        mvn clean test \
-        -Dtestng.output.dir=$(TESTNG_RESULTS) \
-        -Dfile.encoding=UTF-8 \
-        -Dsurefire.reportsDirectory=$(System.DefaultWorkingDirectory)/target/surefire-reports
-    displayName: 'Run TestNG Tests'
+      mavenPomFile: 'pom.xml'
+      goals: 'clean test'
+      options: >-
+        -DskipTests=false
+        -Dtestng.output.dir=$(TESTNG_RESULTS)
+        -Dfile.encoding=UTF-8
+      publishJUnitResults: true
+      testResultsFiles: '**/testng-results.xml, **/TEST-*.xml'
+      javaHomeOption: 'Path'
+      jdkDirectory: '$(JAVA_HOME)'
 
   - script: |
-      mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots}
+      # Create structured artifact directory
+      mkdir -p $(Build.ArtifactStagingDirectory)/artifacts
+      mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots,config,logs}
       
-      # Copy Extent Report
+      # 1. Copy Extent Report
       if [ -f "$(EXTENT_REPORT)" ]; then
         cp "$(EXTENT_REPORT)" $(Build.ArtifactStagingDirectory)/artifacts/reports/
         echo "##[section]Extent Report copied successfully"
       fi
       
-      # Copy screenshots
+      # 2. Copy screenshots
       if [ -d "$(SCREENSHOTS_DIR)" ]; then
         cp -r "$(SCREENSHOTS_DIR)" $(Build.ArtifactStagingDirectory)/artifacts/screenshots/
       fi
       
-      # Copy TestNG reports
+      # 3. Copy configuration files
+      if [ -f "$(CONFIG_FILES)" ]; then
+        cp "$(CONFIG_FILES)" $(Build.ArtifactStagingDirectory)/artifacts/config/
+      fi
+      
+      # 4. Copy TestNG reports
       if [ -d "$(TESTNG_RESULTS)" ]; then
         cp -r "$(TESTNG_RESULTS)" $(Build.ArtifactStagingDirectory)/artifacts/reports/testng/
       fi
       
-      # Copy surefire reports
+      # 5. Copy surefire reports
       if [ -d "target/surefire-reports" ]; then
         cp -r target/surefire-reports $(Build.ArtifactStagingDirectory)/artifacts/reports/surefire/
+      fi
+      
+      # 6. Copy logs if they exist
+      if [ -f "target/logs" ]; then
+        cp -r target/logs $(Build.ArtifactStagingDirectory)/artifacts/logs/
       fi
     displayName: 'Collect Test Artifacts'
 
@@ -90,10 +91,24 @@ steps:
       testResultsFiles: '**/testng-results.xml, **/TEST-*.xml'
       searchFolder: '$(System.DefaultWorkingDirectory)'
       mergeTestResults: true
-      testRunTitle: 'TestNG Results'
+      testRunTitle: 'TestNG Results - $(Build.BuildNumber)'
 
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts'
       ArtifactName: 'Test_Artifacts'
       publishLocation: 'Container'
+
+  - script: |
+      echo "##[section]======= Artifact Locations ======="
+      echo "##[section]Extent Report: $(Build.ArtifactStagingDirectory)/artifacts/reports/automation-report.html"
+      echo "##[section]TestNG Reports: $(Build.ArtifactStagingDirectory)/artifacts/reports/testng/"
+      echo "##[section]Screenshots: $(Build.ArtifactStagingDirectory)/artifacts/screenshots/"
+      echo "##[section]Config Files: $(Build.ArtifactStagingDirectory)/artifacts/config/"
+      echo "##[section]Surefire Reports: $(Build.ArtifactStagingDirectory)/artifacts/reports/surefire/"
+      echo "##[section]================================"
+      
+      
+      # Generate direct link to Extent Report
+      echo "##vso[task.setvariable variable=REPORT_URL;isOutput=true]$(Pipeline.Workspace)/Test_Artifacts/reports/automation-report.html"
+    displayName: 'Generate Artifact Links'
