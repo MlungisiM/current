@@ -27,31 +27,6 @@ pool:
 
 steps:
 
-  # 🔍 Full URL reachability check
-  - script: |
-      echo "🔍 Checking reachability of full URL..."
-      echo "Target URL: $(external_dev_environment_url)"
-      
-      # Extract hostname from full URL
-      HOSTNAME=$(echo $(external_dev_environment_url) | awk -F/ '{print $3}')
-      echo "Step 1: DNS resolution for host in full URL ($HOSTNAME)..."
-      
-      if nslookup $HOSTNAME; then
-        echo "✅ DNS resolved for host $HOSTNAME"
-      else
-        echo "❌ DNS resolution failed for host $HOSTNAME"
-        exit 1
-      fi
-      
-      echo "Step 2: HTTP connectivity for full URL $(external_dev_environment_url)..."
-      if curl -vk --max-time 20 --fail $(external_dev_environment_url); then
-        echo "✅ Full URL is reachable: $(external_dev_environment_url)"
-      else
-        echo "❌ Full URL not reachable: $(external_dev_environment_url). Aborting tests."
-        exit 1
-      fi
-    displayName: "Full URL reachability check"
-
   # Install Java
   - task: JavaToolInstaller@0
     inputs:
