@@ -44,12 +44,12 @@ public class DriverFactory {
 
     public static void launchBrowser() throws Exception {
         String browserName = prop.getProperty("browser").toLowerCase();
-        boolean isHeadless = Boolean.parseBoolean(prop.getProperty("headless", "false"));
+        boolean isHeadless = Boolean.parseBoolean(prop.getProperty("headless", "true"));
 
-        // Set Hudson CSP properties
-        System.clearProperty("hudson.model.DirectoryBrowserSupport.CSP");
-        System.setProperty("hudson.model.DirectoryBrowserSupport.CSP",
-                "sandbox allow-scripts; default-src 'self'; script-src * 'unsafe-eval'; img-src *; style-src * 'unsafe-inline'; font-src *");
+//        // Set Hudson CSP properties
+//        System.clearProperty("hudson.model.DirectoryBrowserSupport.CSP");
+//        System.setProperty("hudson.model.DirectoryBrowserSupport.CSP",
+//                "sandbox allow-scripts; default-src 'self'; script-src * 'unsafe-eval'; img-src *; style-src * 'unsafe-inline'; font-src *");
 
         try {
             switch (browserName) {
@@ -59,11 +59,11 @@ public class DriverFactory {
                     // Create unique user data directory
                     String userDataDir = "/tmp/chrome_profile_" + UUID.randomUUID().toString();
                     chromeOptions.addArguments("--user-data-dir=" + userDataDir);
-
                     // Other common options
-                    chromeOptions.addArguments("--start-maximized");
                     chromeOptions.addArguments("--disable-notifications");
                     chromeOptions.addArguments("--remote-allow-origins=*");
+                    chromeOptions.addArguments("--disable-dev-shm-usage");
+                    chromeOptions.addArguments("--no-sandbox");
                     if (isHeadless) chromeOptions.addArguments("--headless=new");
                     driver.set(new ChromeDriver(chromeOptions));
                     log.info("Chrome driver started");
@@ -102,4 +102,9 @@ public class DriverFactory {
             throw e;
         }
     }
-}
+        private static boolean isCIEnvironment() {
+            return System.getenv("TF_BUILD") != null ||
+                    System.getenv("CI") != null ||
+                    System.getenv("JENKINS_HOME") != null;
+        }
+    }
