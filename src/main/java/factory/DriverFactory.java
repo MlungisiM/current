@@ -14,6 +14,7 @@ import org.openqa.selenium.interactions.Actions;
 
 import java.time.Duration;
 import java.util.Properties;
+import java.util.UUID;
 
 public class DriverFactory {
 
@@ -55,6 +56,14 @@ public class DriverFactory {
                 case "chrome":
                     WebDriverManager.chromedriver().setup();
                     ChromeOptions chromeOptions = new ChromeOptions();
+                    // Create unique user data directory
+                    String userDataDir = "/tmp/chrome_profile_" + UUID.randomUUID().toString();
+                    chromeOptions.addArguments("--user-data-dir=" + userDataDir);
+
+                    // Other common options
+                    chromeOptions.addArguments("--start-maximized");
+                    chromeOptions.addArguments("--disable-notifications");
+                    chromeOptions.addArguments("--remote-allow-origins=*");
                     if (isHeadless) chromeOptions.addArguments("--headless=new");
                     driver.set(new ChromeDriver(chromeOptions));
                     log.info("Chrome driver started");
