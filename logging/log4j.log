@@ -1,10 +1,9 @@
-11:12:51.444 [main] INFO  - Starting Chrome driver
-11:12:52.892 [main] INFO  - Page load time: 1 seconds
-11:12:53.919 [main] INFO  - Current Page Title: Sign in to your account
-11:12:53.957 [main] INFO  - Current Page URL: https://creditguaranteecustomer.ciamlogin.com/ddb108b2-beb1-489b-8374-1e0b554e9b8c/oauth2/v2.0/authorize?response_type=code&scope=openid%20profile%20email&client_id=12ef4a8e-9425-4545-b858-599183144635&state=Z5gihkqfbZCk8jn_kOtx-wc9eOo&redirect_uri=https%3A%2F%2Fwww.devcregalink.co.za%2Foidc&nonce=JETVcXMzk5MymU1qEDVqmBlmO0M9culjXCMX6iO22z8&sso_reload=true
-11:12:54.541 [main] WARN  - TearDown error (driver likely already quit): Session ID is null. Using WebDriver after calling quit()?
+09:18:09.069 [main] INFO  - Chrome driver started
+09:18:11.215 [main] INFO  - Total time to load URL: 2 seconds
+09:18:11.669 [main] INFO  - Incorrect username validation was successfully with username: {}
+09:18:11.989 [main] WARN  - TearDown error (driver likely already quit): Session ID is null. Using WebDriver after calling quit()?
 Build info: version: '4.21.0', revision: '79ed462ef4'
 System info: os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.8'
 Driver info: org.openqa.selenium.chrome.ChromeDriver
 Command: [null, deleteAllCookies {}]
-Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 139.0.7258.128, chrome: {chromedriverVersion: 139.0.7258.68 (40ff94600b6e..., userDataDir: C:\Users\cgejr\AppData\Loca...}, fedcm:accounts: true, goog:chromeOptions: {debuggerAddress: localhost:62418}, networkConnectionEnabled: false, pageLoadStrategy: normal, platformName: windows, proxy: Proxy(), se:cdp: ws://localhost:62418/devtoo..., se:cdpVersion: 139.0.7258.128, setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}
+Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 139.0.7258.128, chrome: {chromedriverVersion: 139.0.7258.138 (884e54ea8d4..., userDataDir: C:\Users\cgejr\AppData\Loca...}, fedcm:accounts: true, goog:chromeOptions: {debuggerAddress: localhost:62336}, networkConnectionEnabled: false, pageLoadStrategy: normal, platformName: windows, proxy: Proxy(), se:cdp: ws://localhost:62336/devtoo..., se:cdpVersion: 139.0.7258.128, setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}
