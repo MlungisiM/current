@@ -90,7 +90,7 @@ public class DriverFactory {
             }
 
             long startTime = System.currentTimeMillis();
-            getDriver().get(prop.getProperty("prod_environment.url"));
+            getDriver().get(prop.getProperty("external_dev_environment.url"));
             getDriver().manage().window().maximize();
             getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
             actions = new Actions(driver.get());
