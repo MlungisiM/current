@@ -19,9 +19,9 @@ variables:
   - name: MAVEN_OPTS
     value: -Dfile.encoding=UTF-8
   - name: EXTENT_REPORT
-    value: "target/reports/cregalink-automation-results.html"   # ✅ Extent report in target/reports
+    value: "target/reports/cregalink-automation-results.html"
   - name: SCREENSHOTS_DIR
-    value: "target/reports/screenshots"                        # ✅ Screenshots in target/reports/screenshots
+    value: "target/reports/screenshots"
   - name: TESTNG_RESULTS
     value: "target/testng-output"
   - name: external_dev_environment_url
@@ -67,9 +67,9 @@ stages:
             inputs:
               script: |
                 mkdir -p $(TESTNG_RESULTS)
-                mkdir -p target/reports/screenshots   # ✅ correct folder structure for reports/screenshots
+                mkdir -p target/reports/screenshots
 
-          # Run Tests with continueOnError to ensure artifacts are collected even if tests fail
+          # Run Tests
           - task: CmdLine@2
             displayName: 'Run TestNG Tests'
             inputs:
@@ -82,7 +82,7 @@ stages:
               failOnStderr: false
               continueOnError: true
 
-          # Publish Test Results (JUnit format from surefire reports)
+          # Publish Test Results (JUnit format)
           - task: PublishTestResults@2
             displayName: 'Publish Test Results'
             inputs:
@@ -97,43 +97,42 @@ stages:
             displayName: 'Collect Artifacts'
             inputs:
               script: |
-                mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{target,reports,screenshots,testng-results}
-                
+                mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots,testng-results}
+
                 # Copy Extent Report
                 if [ -f "$(EXTENT_REPORT)" ]; then
-                  echo "Copying Extent report: $(EXTENT_REPORT)"
+                  echo "Copying Extent report"
                   cp "$(EXTENT_REPORT)" $(Build.ArtifactStagingDirectory)/artifacts/reports/
                 else
-                  echo "Extent report not found: $(EXTENT_REPORT)"
-                  echo "Available files in target/reports/:"
-                  ls -la target/reports/ 2>/dev/null || echo "target/reports/ directory does not exist"
+                  echo "Extent report not found at $(EXTENT_REPORT)"
+                  ls -la target/reports/
                 fi
-                
+
                 # Copy Screenshots
                 if [ -d "$(SCREENSHOTS_DIR)" ]; then
-                  echo "Copying screenshots from: $(SCREENSHOTS_DIR)"
-                  cp -r "$(SCREENSHOTS_DIR)/"* $(Build.ArtifactStagingDirectory)/artifacts/screenshots/ 2>/dev/null || true
+                  echo "Copying screenshots"
+                  cp -r $(SCREENSHOTS_DIR)/* $(Build.ArtifactStagingDirectory)/artifacts/screenshots/
                 else
-                  echo "Screenshots directory not found: $(SCREENSHOTS_DIR)"
+                  echo "Screenshots directory not found at $(SCREENSHOTS_DIR)"
                 fi
-                
+
                 # Copy TestNG results
                 if [ -d "$(TESTNG_RESULTS)" ]; then
-                  echo "Copying TestNG results from: $(TESTNG_RESULTS)"
-                  cp -r "$(TESTNG_RESULTS)/"* $(Build.ArtifactStagingDirectory)/artifacts/testng-results/ 2>/dev/null || true
+                  echo "Copying TestNG results"
+                  cp -r $(TESTNG_RESULTS)/* $(Build.ArtifactStagingDirectory)/artifacts/testng-results/
                 else
-                  echo "TestNG results directory not found: $(TESTNG_RESULTS)"
+                  echo "TestNG results directory not found at $(TESTNG_RESULTS)"
                 fi
-                
+
                 # Copy surefire reports
                 if [ -d "target/surefire-reports" ]; then
                   echo "Copying surefire reports"
-                  cp -r target/surefire-reports $(Build.ArtifactStagingDirectory)/artifacts/ 2>/dev/null || true
+                  cp -r target/surefire-reports $(Build.ArtifactStagingDirectory)/artifacts/
                 else
                   echo "Surefire reports directory not found: target/surefire-reports"
                 fi
 
-          # Publish Build Artifacts
+          # Publish All Artifacts
           - task: PublishBuildArtifacts@1
             displayName: 'Publish All Artifacts'
             inputs:
@@ -141,11 +140,18 @@ stages:
               ArtifactName: 'test-results'
               publishLocation: 'Container'
 
-          # Publish HTML reports as a separate artifact
-          - task: PublishBuildArtifacts@1
-            displayName: 'Publish HTML Reports'
+          # Publish Extent Report
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Extent Report'
             inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/reports'
-              ArtifactName: 'html-reports'
-              publishLocation: 'Container'
+              targetPath: '$(Build.ArtifactStagingDirectory)/artifacts/reports/cregalink-automation-results.html'
+              artifact: 'ExtentReport'
+            condition: succeededOrFailed()
+
+          # Publish Screenshots
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Screenshots'
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/artifacts/screenshots'
+              artifact: 'Screenshots'
             condition: succeededOrFailed()
