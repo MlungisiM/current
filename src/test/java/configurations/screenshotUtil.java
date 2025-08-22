@@ -18,18 +18,22 @@ public class screenshotUtil {
             TakesScreenshot ts = (TakesScreenshot) DriverFactory.getDriver();
             File source = ts.getScreenshotAs(OutputType.FILE);
 
-            // Relative path from HTML report to screenshot
-            String relativePath = "reports/screenshots/" + screenshotName + ".png";
-            String fullPath = System.getProperty("user.dir") + "/target/" + relativePath;
+            // ✅ Folder under target/reports/screenshots
+            String folderPath = System.getProperty("user.dir") + "/target/reports/screenshots/";
+            new File(folderPath).mkdirs(); // ensure folder exists
 
+            String fileName = screenshotName + ".png";
+            String fullPath = folderPath + fileName;
 
             File destination = new File(fullPath);
             FileUtils.copyFile(source, destination);
-            log.info("Screenshot taken successfully and saved at: " + fullPath);
-            System.out.println("Screenshot saved at: " + fullPath);
-            return relativePath; // 🔁 Return relative path, not full
+
+            log.info("Screenshot saved at: " + fullPath);
+
+            // ✅ return relative path from report to screenshot
+            return "screenshots/" + fileName;
         } catch (IOException e) {
-            log.error("screenshot could not be taken: "+e.getMessage());
+            log.error("Screenshot could not be taken: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
