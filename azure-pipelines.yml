@@ -19,9 +19,9 @@ variables:
   - name: MAVEN_OPTS
     value: -Dfile.encoding=UTF-8
   - name: EXTENT_REPORT
-    value: "target/reports/cregalink-automation-results.html"   # ✅ Extent report in target/reports
+    value: "target/reports/cregalink-automation-results.html"   # ✅ Extent report path
   - name: SCREENSHOTS_DIR
-    value: "target/reports/screenshots"                        # ✅ Screenshots in target/reports/screenshots
+    value: "target/reports/screenshots"                        # ✅ Screenshots path
   - name: TESTNG_RESULTS
     value: "target/testng-output"
   - name: external_dev_environment_url
@@ -67,9 +67,9 @@ stages:
             inputs:
               script: |
                 mkdir -p $(TESTNG_RESULTS)
-                mkdir -p target/reports/screenshots   # ✅ correct folder structure for reports/screenshots
+                mkdir -p target/reports/screenshots   # ✅ correct structure
 
-          # Run Tests with continueOnError to ensure artifacts are collected even if tests fail
+          # Run Tests
           - task: CmdLine@2
             displayName: 'Run TestNG Tests'
             inputs:
@@ -97,7 +97,7 @@ stages:
             displayName: 'Collect Artifacts'
             inputs:
               script: |
-                mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{target,reports,screenshots,testng-results}
+                mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots,testng-results}
                 
                 # Copy Extent Report
                 if [ -f "$(EXTENT_REPORT)" ]; then
@@ -133,7 +133,7 @@ stages:
                   echo "Surefire reports directory not found: target/surefire-reports"
                 fi
 
-          # Publish Build Artifacts
+          # Publish Build Artifacts (zipped package with everything)
           - task: PublishBuildArtifacts@1
             displayName: 'Publish All Artifacts'
             inputs:
@@ -141,11 +141,18 @@ stages:
               ArtifactName: 'test-results'
               publishLocation: 'Container'
 
-          # Publish HTML reports as a separate artifact
-          - task: PublishBuildArtifacts@1
-            displayName: 'Publish HTML Reports'
+          # ✅ Publish Extent Report directly (Option 3)
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Extent Report'
             inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/reports'
-              ArtifactName: 'html-reports'
-              publishLocation: 'Container'
+              targetPath: '$(Build.ArtifactStagingDirectory)/artifacts/reports/cregalink-automation-results.html'
+              artifact: 'ExtentReport'
+            condition: succeededOrFailed()
+
+          # Publish Screenshots as pipeline artifact
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Screenshots'
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)/artifacts/screenshots'
+              artifact: 'Screenshots'
             condition: succeededOrFailed()
