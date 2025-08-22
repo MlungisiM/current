@@ -2,13 +2,12 @@ package tests;
 
 import actions.login_actions;
 import base.base_class;
-import org.apache.hc.core5.reactor.Command;
+import configurations.ExtentTestListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
-import utilities.TestListener;
 
-@Listeners(TestListener.class)
+@Listeners(ExtentTestListener.class)
 public class login_tests extends base_class {
 
     login_actions login;
