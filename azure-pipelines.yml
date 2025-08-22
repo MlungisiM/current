@@ -100,36 +100,36 @@ stages:
                 mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{reports,screenshots,testng-results}
                 
                 # Copy Extent Report
-                if [ -f "$(EXTENT_REPORT)" ]; then
-                  echo "Copying Extent report: $(EXTENT_REPORT)"
-                  cp "$(EXTENT_REPORT)" $(Build.ArtifactStagingDirectory)/artifacts/reports/
+                if [ -f "target/reports/cregalink-automation-results.html" ]; then
+                  echo "Copying Extent report"
+                  cp target/reports/cregalink-automation-results.html $(Build.ArtifactStagingDirectory)/artifacts/reports/
                 else
-                  echo "Extent report not found: $(EXTENT_REPORT)"
-                  ls -la target/reports/ 2>/dev/null || echo "target/reports/ directory does not exist"
+                  echo "Extent report not found in target/reports/"
+                  ls -la target/reports/
                 fi
-                
+
                 # Copy Screenshots
-                if [ -d "$(SCREENSHOTS_DIR)" ]; then
-                  echo "Copying screenshots from: $(SCREENSHOTS_DIR)"
-                  cp -r "$(SCREENSHOTS_DIR)/"* $(Build.ArtifactStagingDirectory)/artifacts/screenshots/ 2>/dev/null || true
+                if [ -d "target/reports/screenshots" ]; then
+                  echo "Copying screenshots"
+                  cp -r target/reports/screenshots/* $(Build.ArtifactStagingDirectory)/artifacts/screenshots/
                 else
-                  echo "Screenshots directory not found: $(SCREENSHOTS_DIR)"
+                  echo "Screenshots directory not found"
                 fi
-                
+
                 # Copy TestNG results
                 if [ -d "$(TESTNG_RESULTS)" ]; then
-                  echo "Copying TestNG results from: $(TESTNG_RESULTS)"
-                  cp -r "$(TESTNG_RESULTS)/"* $(Build.ArtifactStagingDirectory)/artifacts/testng-results/ 2>/dev/null || true
+                  echo "Copying TestNG results"
+                  cp -r $(TESTNG_RESULTS)/* $(Build.ArtifactStagingDirectory)/artifacts/testng-results/
                 else
-                  echo "TestNG results directory not found: $(TESTNG_RESULTS)"
+                  echo "TestNG results directory not found"
                 fi
-                
+
                 # Copy surefire reports
                 if [ -d "target/surefire-reports" ]; then
                   echo "Copying surefire reports"
-                  cp -r target/surefire-reports $(Build.ArtifactStagingDirectory)/artifacts/ 2>/dev/null || true
+                  cp -r target/surefire-reports $(Build.ArtifactStagingDirectory)/artifacts/
                 else
-                  echo "Surefire reports directory not found: target/surefire-reports"
+                  echo "Surefire reports directory not found"
                 fi
 
           # Publish Build Artifacts (all)
