@@ -19,6 +19,7 @@ public class login_actions extends base_class {
     @BeforeMethod
     public void init() {
         if (getDriver() == null) {
+            log.error("WebDriver is not initialized.");
             throw new IllegalStateException("WebDriver is not initialized.");
         }
         _login_page = new login_page();
