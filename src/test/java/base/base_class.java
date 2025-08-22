@@ -81,7 +81,7 @@ public abstract class base_class extends DriverFactory {
         try {
             TakesScreenshot ts = (TakesScreenshot) getDriver();
             File source = ts.getScreenshotAs(OutputType.FILE);
-            String dest = System.getProperty("user.dir") + "/reports/" + screenshotName + ".png";
+            String dest = System.getProperty("user.dir") + "/target/" + screenshotName + ".png";
             File destination = new File(dest);
             FileUtils.copyFile(source, destination);
             System.out.println("Screenshot taken: " + dest);

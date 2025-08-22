@@ -20,7 +20,7 @@ public class screenshotUtil {
 
             // Relative path from HTML report to screenshot
             String relativePath = "screenshots/" + screenshotName + ".png";
-            String fullPath = System.getProperty("user.dir") + "/reports/" + relativePath;
+            String fullPath = System.getProperty("user.dir") + "/target/" + relativePath;
 
             File destination = new File(fullPath);
             FileUtils.copyFile(source, destination);

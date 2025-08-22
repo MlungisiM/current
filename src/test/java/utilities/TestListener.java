@@ -19,9 +19,9 @@ public class TestListener implements ITestListener {
     private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
     public void onStart(ITestContext context) {
-        ExtentSparkReporter sparkReporter = new ExtentSparkReporter("reports/automation-report.html");
+        ExtentSparkReporter sparkReporter = new ExtentSparkReporter("target/cregalink-automation-report.html");
 
-        sparkReporter.config().setDocumentTitle("Automation Test Report");
+        sparkReporter.config().setDocumentTitle("Cregalink Automation Test Report");
         sparkReporter.config().setReportName("Cregalink UI Testing");
         sparkReporter.config().setTheme(Theme.DARK);
 
