@@ -19,8 +19,9 @@ public class screenshotUtil {
             File source = ts.getScreenshotAs(OutputType.FILE);
 
             // Relative path from HTML report to screenshot
-            String relativePath = "screenshots/" + screenshotName + ".png";
+            String relativePath = "reports/screenshots/" + screenshotName + ".png";
             String fullPath = System.getProperty("user.dir") + "/target/" + relativePath;
+
 
             File destination = new File(fullPath);
             FileUtils.copyFile(source, destination);

@@ -12,6 +12,8 @@ import org.testng.ITestListener;
 import org.testng.ITestResult;
 import configurations.screenshotUtil;
 
+import java.nio.file.Paths;
+
 public class TestListener implements ITestListener {
 
     private static ExtentReports extent;
@@ -19,7 +21,8 @@ public class TestListener implements ITestListener {
     private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
     public void onStart(ITestContext context) {
-        ExtentSparkReporter sparkReporter = new ExtentSparkReporter("target/cregalink-automation-report.html");
+        String reportPath = Paths.get("target", "reports", "cregalink-automation-results.html").toString();
+        ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
 
         sparkReporter.config().setDocumentTitle("Cregalink Automation Test Report");
         sparkReporter.config().setReportName("Cregalink UI Testing");
