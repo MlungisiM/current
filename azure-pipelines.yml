@@ -144,7 +144,7 @@ stages:
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Extent Report'
             inputs:
-              targetPath: '$(Build.ArtifactStagingDirectory)/artifacts/reports/cregalink-automation-results.html'
+              targetPath: '$(Build.ArtifactStagingDirectory)/artifacts/target/reports/cregalink-automation-results.html'
               artifact: 'ExtentReport'
             condition: succeededOrFailed()
 
