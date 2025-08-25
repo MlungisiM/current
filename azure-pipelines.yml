@@ -47,6 +47,7 @@ steps:
       ArtifactName: "TestReports"
       publishLocation: "Container"
 
+
   # This requires installing "Publish HTML Reports" extension in Azure DevOps
 #  - task: PublishHtmlReport@1
 #    displayName: "Publish Extent HTML Report in Pipeline"
