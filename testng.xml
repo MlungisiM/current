@@ -3,7 +3,7 @@
 
 <suite name="All Test Suite" parallel="tests" thread-count="4">
     <listeners>
-        <listener class-name="utilities.TestListener"/>
+        <listener class-name="configurations.ExtentTestListener"/>
     </listeners>
     <test name="Login Tests">
         <classes>

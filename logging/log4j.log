@@ -1,11 +1,48 @@
-11:26:34.016 [main] INFO  - Chrome driver started
-11:26:35.147 [main] INFO  - Total time to load URL: 1 seconds
-11:26:35.425 [main] INFO  - Current Page URL: https://creditguaranteecustomer.ciamlogin.com/ddb108b2-beb1-489b-8374-1e0b554e9b8c/oauth2/v2.0/authorize?response_type=code&scope=openid%20profile%20email&client_id=12ef4a8e-9425-4545-b858-599183144635&state=Ri2RxD6FCZ8QD7DaVrU8toa9v6E&redirect_uri=https%3A%2F%2Fwww.devcregalink.co.za%2Foidc&nonce=2S_ju4uIqmGzkE5_KWNBrQnfe4lyQABiXDC4TL-WJpA&sso_reload=true
-11:26:35.447 [main] INFO  - Current Page Title: Sign in to your account
-11:26:37.273 [main] INFO  - User logged in successfully with username: mlu.mbele@gmail.com
-11:26:38.486 [main] WARN  - TearDown error (driver likely already quit): Session ID is null. Using WebDriver after calling quit()?
-Build info: version: '4.21.0', revision: '79ed462ef4'
-System info: os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.8'
-Driver info: org.openqa.selenium.chrome.ChromeDriver
-Command: [null, deleteAllCookies {}]
-Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 139.0.7258.128, chrome: {chromedriverVersion: 139.0.7258.138 (884e54ea8d4..., userDataDir: C:\Users\cgejr\AppData\Loca...}, fedcm:accounts: true, goog:chromeOptions: {debuggerAddress: localhost:60745}, networkConnectionEnabled: false, pageLoadStrategy: normal, platformName: windows, proxy: Proxy(), se:cdp: ws://localhost:60745/devtoo..., se:cdpVersion: 139.0.7258.128, setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}
+09:51:18.996 [main] ERROR - Unable to start chrome browser
+io.github.bonigarcia.wdm.config.WebDriverManagerException: io.github.bonigarcia.wdm.config.WebDriverManagerException: Error HTTP 403 executing https://storage.googleapis.com/chrome-for-testing-public/140.0.7339.82/win64/chromedriver-win64.zip
+	at io.github.bonigarcia.wdm.WebDriverManager.handleException(WebDriverManager.java:1447)
+	at io.github.bonigarcia.wdm.WebDriverManager.manage(WebDriverManager.java:1210)
+	at io.github.bonigarcia.wdm.WebDriverManager.fallback(WebDriverManager.java:1463)
+	at io.github.bonigarcia.wdm.WebDriverManager.handleException(WebDriverManager.java:1441)
+	at io.github.bonigarcia.wdm.WebDriverManager.manage(WebDriverManager.java:1210)
+	at io.github.bonigarcia.wdm.WebDriverManager.setup(WebDriverManager.java:429)
+	at factory.DriverFactory.launchBrowser(DriverFactory.java:57)
+	at factory.DriverFactory.initDriver(DriverFactory.java:40)
+	at base.base_class.setUp(base_class.java:50)
+	at tests.login_tests.initPages(login_tests.java:17)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:139)
+	at org.testng.internal.invokers.MethodInvocationHelper.invokeMethodConsideringTimeout(MethodInvocationHelper.java:69)
+	at org.testng.internal.invokers.ConfigInvoker.invokeConfigurationMethod(ConfigInvoker.java:393)
+	at org.testng.internal.invokers.ConfigInvoker.invokeConfigurations(ConfigInvoker.java:326)
+	at org.testng.internal.invokers.TestInvoker.runConfigMethods(TestInvoker.java:810)
+	at org.testng.internal.invokers.TestInvoker.invokeMethod(TestInvoker.java:578)
+	at org.testng.internal.invokers.TestInvoker.invokeTestMethod(TestInvoker.java:228)
+	at org.testng.internal.invokers.MethodRunner.runInSequence(MethodRunner.java:63)
+	at org.testng.internal.invokers.TestInvoker$MethodInvocationAgent.invoke(TestInvoker.java:961)
+	at org.testng.internal.invokers.TestInvoker.invokeTestMethods(TestInvoker.java:201)
+	at org.testng.internal.invokers.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:148)
+	at org.testng.internal.invokers.TestMethodWorker.run(TestMethodWorker.java:128)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at org.testng.TestRunner.privateRun(TestRunner.java:819)
+	at org.testng.TestRunner.run(TestRunner.java:619)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:443)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:437)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:397)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:336)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:95)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1301)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1228)
+	at org.testng.TestNG.runSuites(TestNG.java:1134)
+	at org.testng.TestNG.run(TestNG.java:1101)
+	at com.intellij.rt.testng.IDEARemoteTestNG.run(IDEARemoteTestNG.java:65)
+	at com.intellij.rt.testng.RemoteTestNGStarter.main(RemoteTestNGStarter.java:105)
+Caused by: io.github.bonigarcia.wdm.config.WebDriverManagerException: Error HTTP 403 executing https://storage.googleapis.com/chrome-for-testing-public/140.0.7339.82/win64/chromedriver-win64.zip
+	at io.github.bonigarcia.wdm.online.HttpClient.execute(HttpClient.java:166)
+	at io.github.bonigarcia.wdm.online.Downloader.downloadAndExtract(Downloader.java:137)
+	at io.github.bonigarcia.wdm.online.Downloader.download(Downloader.java:92)
+	at io.github.bonigarcia.wdm.WebDriverManager.download(WebDriverManager.java:1303)
+	at io.github.bonigarcia.wdm.WebDriverManager.manage(WebDriverManager.java:1204)
+	... 37 more
