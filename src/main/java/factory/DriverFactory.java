@@ -44,7 +44,7 @@ public class DriverFactory {
 
     public static void launchBrowser() throws Exception {
         String browserName = prop.getProperty("browser").toLowerCase();
-        boolean isHeadless = Boolean.parseBoolean(prop.getProperty("headless", "false"));
+        boolean isHeadless = Boolean.parseBoolean(prop.getProperty("headless", "true"));
 
         // Set Hudson CSP properties
         System.clearProperty("hudson.model.DirectoryBrowserSupport.CSP");
