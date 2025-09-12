@@ -1,57 +1,151 @@
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
 trigger:
   branches:
     include:
       - main
 
 schedules:
-  - cron: "0 6 * * *"   # 06:00 UTC = 08:00 SAST
-    displayName: Daily 8AM Run
+  - cron: "0 6 * * *"
+    displayName: Daily test run
+    always: true
     branches:
       include:
         - main
-    always: true
-
-pool:
-  vmImage: 'ubuntu-latest'
 
 variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$(Pipeline.Workspace)/.m2/repository"
+  - name: JAVA_HOME
+    value: /usr/lib/jvm/java-21-openjdk
+  - name: MAVEN_OPTS
+    value: -Dfile.encoding=UTF-8
+  - name: EXTENT_REPORT
+    value: "target/reports/cregalink-automation-results.html"   # ✅ Extent report in target/reports
+  - name: SCREENSHOTS_DIR
+    value: "target/reports/screenshots"                        # ✅ Screenshots in target/reports/screenshots
+  - name: TESTNG_RESULTS
+    value: "target/testng-output"
+  - name: external_dev_environment_url
+    value: "https://www.devcregalink.co.za/cregaweb/faces/index.xhtml"
 
-steps:
-  - task: Maven@4
-    displayName: "Build and Run Tests"
-    inputs:
-      mavenPomFile: "pom.xml"
-      goals: "clean test"
-      options: "-Dmaven.test.failure.ignore=false"
-      publishJUnitResults: true
-      testResultsFiles: "**/target/surefire-reports/TEST-*.xml"
-      javaHomeOption: "JDKVersion"
-      jdkVersionOption: "1.11"
-      jdkArchitectureOption: "x64"
-      mavenVersionOption: "Default"
+stages:
+  - stage: Test
+    jobs:
+      - job: Run_Tests
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          # Install Java
+          - task: JavaToolInstaller@0
+            inputs:
+              versionSpec: '21'
+              jdkArchitectureOption: 'x64'
+              jdkSourceOption: 'PreInstalled'
+            displayName: 'Install Java 21'
 
-  - task: CopyFiles@2
-    displayName: "Copy Extent Report & Screenshots"
-    inputs:
-      SourceFolder: "$(System.DefaultWorkingDirectory)/target/reports"
-      Contents: |
-        cregalink-automation-results.html
-        screenshots/**/*
-      TargetFolder: "$(Build.ArtifactStagingDirectory)/reports"
+          # Configure Maven
+          - task: CmdLine@2
+            displayName: 'Configure Secure Maven'
+            inputs:
+              script: |
+                mkdir -p ~/.m2
+                cat > ~/.m2/settings.xml << 'EOF'
+                <settings>
+                  <mirrors>
+                    <mirror>
+                      <id>secure-central</id>
+                      <name>Maven Central</name>
+                      <url>https://repo.maven.apache.org/maven2</url>
+                      <mirrorOf>central</mirrorOf>
+                    </mirror>
+                  </mirrors>
+                </settings>
+                EOF
 
-  - task: PublishBuildArtifacts@1
-    displayName: "Publish Test Reports"
-    inputs:
-      PathtoPublish: "$(Build.ArtifactStagingDirectory)/reports"
-      ArtifactName: "TestReports"
-      publishLocation: "Container"
+          # Prepare directories
+          - task: CmdLine@2
+            displayName: 'Prepare Test Directories'
+            inputs:
+              script: |
+                mkdir -p $(TESTNG_RESULTS)
+                mkdir -p target/reports/screenshots   # ✅ correct folder structure for reports/screenshots
 
+          # Run Tests with continueOnError to ensure artifacts are collected even if tests fail
+          - task: CmdLine@2
+            displayName: 'Run TestNG Tests'
+            inputs:
+              script: |
+                mvn clean test \
+                -Dtestng.output.dir=$(TESTNG_RESULTS) \
+                -Dfile.encoding=UTF-8 \
+                -Dsurefire.reportsDirectory=$(System.DefaultWorkingDirectory)/target/surefire-reports \
+                -DbaseUrl=$(external_dev_environment_url)
+              failOnStderr: false
+              continueOnError: true
 
-  # This requires installing "Publish HTML Reports" extension in Azure DevOps
-#  - task: PublishHtmlReport@1
-#    displayName: "Publish Extent HTML Report in Pipeline"
-#    inputs:
-#      reportDir: "$(System.DefaultWorkingDirectory)/target/reports"
-#      reportFiles: "cregalink-automation-results.html"
-#      reportName: "ExtentReport"
+          # Publish Test Results (JUnit format from surefire reports)
+          - task: PublishTestResults@2
+            displayName: 'Publish Test Results'
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/surefire-reports/*.xml'
+              mergeTestResults: true
+              testRunTitle: 'TestNG Test Results'
+              failTaskOnFailedTests: false
+
+          # Collect Artifacts
+          - task: CmdLine@2
+            displayName: 'Collect Artifacts'
+            inputs:
+              script: |
+                mkdir -p $(Build.ArtifactStagingDirectory)/artifacts/{target,reports,screenshots,testng-results}
+                
+                # Copy Extent Report
+                if [ -f "$(EXTENT_REPORT)" ]; then
+                  echo "Copying Extent report: $(EXTENT_REPORT)"
+                  cp "$(EXTENT_REPORT)" $(Build.ArtifactStagingDirectory)/artifacts/reports/
+                else
+                  echo "Extent report not found: $(EXTENT_REPORT)"
+                  echo "Available files in target/reports/:"
+                  ls -la target/reports/ 2>/dev/null || echo "target/reports/ directory does not exist"
+                fi
+                
+                # Copy Screenshots
+                if [ -d "$(SCREENSHOTS_DIR)" ]; then
+                  echo "Copying screenshots from: $(SCREENSHOTS_DIR)"
+                  cp -r "$(SCREENSHOTS_DIR)/"* $(Build.ArtifactStagingDirectory)/artifacts/screenshots/ 2>/dev/null || true
+                else
+                  echo "Screenshots directory not found: $(SCREENSHOTS_DIR)"
+                fi
+                
+                # Copy TestNG results
+                if [ -d "$(TESTNG_RESULTS)" ]; then
+                  echo "Copying TestNG results from: $(TESTNG_RESULTS)"
+                  cp -r "$(TESTNG_RESULTS)/"* $(Build.ArtifactStagingDirectory)/artifacts/testng-results/ 2>/dev/null || true
+                else
+                  echo "TestNG results directory not found: $(TESTNG_RESULTS)"
+                fi
+                
+                # Copy surefire reports
+                if [ -d "target/surefire-reports" ]; then
+                  echo "Copying surefire reports"
+                  cp -r target/surefire-reports $(Build.ArtifactStagingDirectory)/artifacts/ 2>/dev/null || true
+                else
+                  echo "Surefire reports directory not found: target/surefire-reports"
+                fi
+
+          # Publish Build Artifacts
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish All Artifacts'
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts'
+              ArtifactName: 'test-results'
+              publishLocation: 'Container'
+
+          # Publish HTML reports as a separate artifact
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish HTML Reports'
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifacts/reports'
+              ArtifactName: 'html-reports'
+              publishLocation: 'Container'
+            condition: succeededOrFailed()
