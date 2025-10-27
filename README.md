@@ -25,10 +25,10 @@ Download and Install:
 ## Framework
 ### Tools
 ```bash
-Testing Framework: Selenium/Cucumber
+Testing Framework: Page Object Model
 Build Tool: Maven
 Testing Tool: TestNG
-Programming Language: Java
+Programming Language: Selenium Java
 ```
 
 ### Design
@@ -38,7 +38,8 @@ web-config and webdriver manager stored within framework to easily access and us
 
 ```bash
 Framework consists of following modules / packages:
-•	Common (driver initialization classes), 
+•	DriverFactory (driver initialization classes and driver config), 
+•	base (Hooks and various methods), 
 •	pages (web applications page factory), 
 •	resources(web-config.properties file)
 •	tests (for web tests)
@@ -76,7 +77,7 @@ To execute each Class, navigate to the respective class > right-click on it > ru
 ```
 
 ```bash
-2.	Change the device details in webconfig.properties file to match your details
+2.	Change the environment details in webconfig.properties
 
 ```bash
 3.	Navigate to the tests class > Right-click and run using the TestNG

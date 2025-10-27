@@ -56,10 +56,6 @@ public class DriverFactory {
                 case "chrome":
                     WebDriverManager.chromedriver().setup();
                     ChromeOptions chromeOptions = new ChromeOptions();
-                    // Create unique user data directory
-//                    String userDataDir = "/tmp/chrome_profile_" + UUID.randomUUID().toString();
-//                    chromeOptions.addArguments("--user-data-dir=" + userDataDir);
-                    // Other common options
                     chromeOptions.addArguments("--disable-notifications");
                     chromeOptions.addArguments("--remote-allow-origins=*");
                     chromeOptions.addArguments("--disable-dev-shm-usage");
@@ -90,7 +86,7 @@ public class DriverFactory {
             }
 
             long startTime = System.currentTimeMillis();
-            getDriver().get(prop.getProperty("external_dev_environment.url"));
+            getDriver().get(prop.getProperty("internal_qa_environment.url"));
             getDriver().manage().window().maximize();
             getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
             actions = new Actions(driver.get());
