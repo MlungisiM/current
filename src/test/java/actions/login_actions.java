@@ -32,35 +32,37 @@ public class login_actions extends base_class {
         log.info("Current Page Title: " + getDriver().getTitle());
         System.out.println("Current Page Title: " + getDriver().getTitle());
 
-        getDriver().manage().deleteAllCookies();
+        //getDriver().manage().deleteAllCookies();
         String sso_username = DriverFactory.prop.getProperty("sso_username");
         String sso_password = DriverFactory.prop.getProperty("sso_password");
 
-        String cregalink_username = DriverFactory.prop.getProperty("sso_username");
-        String cregalink_password = getProperty("sso_password");
+        String cregalink_username = DriverFactory.prop.getProperty("cregalink_username");
+        String cregalink_password = getProperty("cregalink_password");
+
+
 
         if (sso_username == null || sso_username.isEmpty() || cregalink_username == null || cregalink_username.isEmpty()) {
             log.error("Username is missing in properties file.");
             throw new IllegalStateException("Missing required property: username");
-        } else if (sso_password == null || sso_password.isEmpty()) {
+        } else if (sso_password == null || sso_password.isEmpty() || cregalink_password == null || cregalink_password.isEmpty()) {
             log.error("Password is missing in properties file.");
-            throw new IllegalStateException("Missing required property: username");
+            throw new IllegalStateException("Missing required property: {}");
         }
 
         try {
-            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_username_textbox));
-            _login_page.sso_username_textbox.click();
-            _login_page.sso_username_textbox.sendKeys(sso_username);
-            _login_page.sso_next_button.click();
-            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_password_textbox));
-            _login_page.sso_password_textbox.click();
-            _login_page.sso_password_textbox.sendKeys(sso_password);
-            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.sso_signIn_button));
-            _login_page.sso_signIn_button.click();
-            log.info("User logged in successfully with username: {}", sso_username);
-            System.out.println("User logged in successfully");
+            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.cregalink_username_button));
+            _login_page.cregalink_username_button.click();
+            _login_page.cregalink_username_button.sendKeys(cregalink_username);
+            _login_page.cregalink_password_textbox.click();
+            _login_page.cregalink_password_textbox.sendKeys(cregalink_password);
+            _login_page.cregalink_login_button.click();
+            String cregalink_disclaimer_label = getDriver().findElement(By.xpath("//*[@id=\"getDisclaimerNew\"]/div/div[2]/span")).getText();
+            Assert.assertTrue(cregalink_disclaimer_label.contains("CregaLink disclaimer"));
+            log.info("User logged in successfully with username: {}", cregalink_username);
+            System.out.println("User logged in successfully with username: " + cregalink_username);
         } catch (Exception e) {
             log.error("Login failed: {}", e.getMessage(), e);
+            System.out.println("Login failed: " + e.getMessage());
             throw e;
         }
     }
