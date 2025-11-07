@@ -29,6 +29,9 @@ public class login_tests extends base_class {
     @Test(testName = "Login with empty username")
     public void LoginEmptyUsername() throws Exception {login.loginEmptyUsername();}
 
-    @Test(testName = "Login with an inccorect username")
+    @Test(testName = "Login with an incorrect username")
     public void LoginIncorrectPassword() throws Exception {login.IncorrectPassword();}
+
+    @Test(testName = "Login with an empty password")
+    public void LoginEmptyPassword() throws Exception {login.loginEmptyPassword();}
 }
