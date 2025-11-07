@@ -12,8 +12,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import pages.login_page;
 
-import java.time.Duration;
-
 
 public class login_actions extends base_class {
 
