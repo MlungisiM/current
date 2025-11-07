@@ -1,11 +1,3 @@
-10:42:29.825 [main] INFO  - Chrome driver started
-10:42:30.524 [main] INFO  - Total time to load URL: 0 seconds
-10:42:30.678 [main] INFO  - Current Page URL: http://10.190.10.112:9080/CregaWebDaa/faces/index.xhtml
-10:42:30.696 [main] INFO  - Current Page Title: 
-10:42:32.490 [main] INFO  - User logged in successfully with username: TE000159
-10:42:32.851 [main] WARN  - TearDown error (driver likely already quit): Session ID is null. Using WebDriver after calling quit()?
-Build info: version: '4.21.0', revision: '79ed462ef4'
-System info: os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.8'
-Driver info: org.openqa.selenium.chrome.ChromeDriver
-Command: [null, deleteAllCookies {}]
-Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 141.0.7390.108, chrome: {chromedriverVersion: 141.0.7390.122 (b477534e7e1..., userDataDir: C:\Users\cgejr\AppData\Loca...}, fedcm:accounts: true, goog:chromeOptions: {debuggerAddress: localhost:54346}, networkConnectionEnabled: false, pageLoadStrategy: normal, platformName: windows, proxy: Proxy(), se:cdp: ws://localhost:54346/devtoo..., se:cdpVersion: 141.0.7390.108, setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}
+12:33:22.489 [main] INFO  - Chrome driver started
+12:33:23.860 [main] INFO  - Total time to load URL: 1 seconds
+12:33:25.599 [main] INFO  - Validation Successful: User could not login with an empty username

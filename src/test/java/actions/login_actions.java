@@ -3,8 +3,11 @@ package actions;
 import base.base_class;
 import factory.DriverFactory;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import pages.login_page;
@@ -15,6 +18,16 @@ import java.time.Duration;
 public class login_actions extends base_class {
 
     private login_page _login_page;
+    String sso_username = DriverFactory.prop.getProperty("sso_username");
+    String sso_password = DriverFactory.prop.getProperty("sso_password");
+
+    String cregalink_username = DriverFactory.prop.getProperty("cregalink_username");
+    String cregalink_password = getProperty("cregalink_password");
+
+    String username_missing_message = "Username is missing in properties file.";
+    String password_missing_message = "Password is missing in properties file.";
+    String page_url = getDriver().getCurrentUrl();
+
 
     @BeforeMethod
     public void init() {
@@ -27,85 +40,131 @@ public class login_actions extends base_class {
 
 
     public void loginValidUsername() throws Exception {
-        log.info("Current Page URL: " + getDriver().getCurrentUrl());
-        System.out.println("Current URL: " + getDriver().getCurrentUrl());
-        log.info("Current Page Title: " + getDriver().getTitle());
-        System.out.println("Current Page Title: " + getDriver().getTitle());
 
-        //getDriver().manage().deleteAllCookies();
-        String sso_username = DriverFactory.prop.getProperty("sso_username");
-        String sso_password = DriverFactory.prop.getProperty("sso_password");
-
-        String cregalink_username = DriverFactory.prop.getProperty("cregalink_username");
-        String cregalink_password = getProperty("cregalink_password");
-
-
-
-        if (sso_username == null || sso_username.isEmpty() || cregalink_username == null || cregalink_username.isEmpty()) {
-            log.error("Username is missing in properties file.");
+        if (sso_username == null && sso_username.isEmpty() && cregalink_username == null && cregalink_username.isEmpty()) {
+            log.error("Current Page URL: {}", page_url);
             throw new IllegalStateException("Missing required property: username");
-        } else if (sso_password == null || sso_password.isEmpty() || cregalink_password == null || cregalink_password.isEmpty()) {
-            log.error("Password is missing in properties file.");
+        } else if (sso_password == null && sso_password.isEmpty() && cregalink_password == null && cregalink_password.isEmpty()) {
+            log.error(password_missing_message);
             throw new IllegalStateException("Missing required property: {}");
         }
 
         try {
-            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.cregalink_username_button));
-            _login_page.cregalink_username_button.click();
-            _login_page.cregalink_username_button.sendKeys(cregalink_username);
+            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.cregalink_username_textbox));
+            _login_page.cregalink_username_textbox.click();
+            _login_page.cregalink_username_textbox.sendKeys(cregalink_username);
             _login_page.cregalink_password_textbox.click();
             _login_page.cregalink_password_textbox.sendKeys(cregalink_password);
             _login_page.cregalink_login_button.click();
-            String cregalink_disclaimer_label = getDriver().findElement(By.xpath("//*[@id=\"getDisclaimerNew\"]/div/div[2]/span")).getText();
-            Assert.assertTrue(cregalink_disclaimer_label.contains("CregaLink disclaimer"));
+            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.disclaimer_checkbox));
+            _login_page.disclaimer_checkbox.click();
+
+            getWait().ignoring(StaleElementReferenceException.class)
+                    .until(ExpectedConditions.elementToBeClickable(_login_page.accept_disclaimer_button))
+                    .click();
+
+            log.info("User accepted the Cregalink disclaimer");
+            Assert.assertTrue(_login_page.logout_button.isDisplayed());
             log.info("User logged in successfully with username: {}", cregalink_username);
-            System.out.println("User logged in successfully with username: " + cregalink_username);
         } catch (Exception e) {
             log.error("Login failed: {}", e.getMessage(), e);
-            System.out.println("Login failed: " + e.getMessage());
             throw e;
         }
     }
 
-//    public void loginIncorrectUsername() {
-//
-//        String username = DriverFactory.prop.getProperty("sso_password");
-//        String password = getProperty("sso_password");
-//
-//        if (username == null || username.isEmpty()) {
-//            log.error("Username is missing in properties file.");
-//            throw new IllegalStateException("Missing required property: username");
-//        }
-//
-//        try {
-//            _login_page.sso_username_textbox.sendKeys(username);
-//            _login_page.sso_next_button.click();
-//            _login_page.sso_password_textbox.sendKeys(password); // if password is needed
-//            _login_page.sso_signIn_button.click();
-//            log.info("Incorrect username validation was successfully with username: {}");
-//        } catch (Exception e) {
-//            log.error("Test failed, user was logged in with an incorrect username: {}", e.getMessage(), e);
-//            throw e;
-//        }
-//    }
-//
-//    public void loginEmptyUsername() {
-//
-//        String username = DriverFactory.prop.getProperty("");
-//        String password = getProperty("sso_password");
-//
-//            if (username != null || !username.isEmpty()) {
-//                log.error("Username should be empty but is currently populated");
-//                throw new IllegalStateException("Username should be empty but is currently populated");
-//            }
-//        try{
-//                _login_page.sso_next_button.click();
-//                Assert.assertTrue(_login_page.missing_username_message.isDisplayed());
-//                log.info("Empty username validation passed");
-//            }
-//            catch(Exception e) {
-//                log.error("User was able to proceed with empty username");
-//            }
-//
-//        }
+    public void IncorrectUsername() throws Exception {
+
+        if (sso_username == null && sso_username.isEmpty() && cregalink_username == null && cregalink_username.isEmpty()) {
+            log.error(username_missing_message);
+            throw new IllegalStateException("Missing required property: username");
+        } else if (sso_password == null && sso_password.isEmpty() && cregalink_password == null && cregalink_password.isEmpty()) {
+            log.error(password_missing_message);
+            throw new IllegalStateException("Missing required property: {}");
+        }
+
+        try {
+            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.cregalink_username_textbox));
+            _login_page.cregalink_username_textbox.click();
+            _login_page.cregalink_username_textbox.sendKeys("qwerty");
+            _login_page.cregalink_password_textbox.click();
+            _login_page.cregalink_password_textbox.sendKeys(cregalink_password);
+            _login_page.cregalink_login_button.click();
+            String Invalidmessage = _login_page.invalid_useridOrpassword_message.getText();
+            getWait().until(ExpectedConditions.visibilityOf(_login_page.invalid_useridOrpassword_message));
+            Assert.assertTrue(Invalidmessage.contains("Invalid user or password"));
+            log.info("Validation Successful: User could not login with an incorrect username when using username: {}");
+        } catch (Exception e) {
+            log.error("Validation failed, user could login using an incorrect username: {}", e.getMessage(), e);
+            throw e;
+        }
     }
+
+    public void loginEmptyUsername() throws Exception {
+
+        if (sso_password == null && sso_password.isEmpty() && cregalink_password == null && cregalink_password.isEmpty()) {
+            log.error(password_missing_message);
+            throw new IllegalStateException("Missing required property: {}");
+        }
+
+        try {
+            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.cregalink_username_textbox));
+            _login_page.cregalink_password_textbox.click();
+            _login_page.cregalink_password_textbox.sendKeys(cregalink_password);
+            _login_page.cregalink_login_button.click();
+            String enteruserid_message = _login_page.enter_userid_message.getText();
+            Assert.assertTrue(enteruserid_message.contains("Please enter userid"));
+            log.info("Validation Successful: User could not login with an empty username");
+        } catch (Exception e) {
+            log.error("Verification failed, user could login with an empty username: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public void IncorrectPassword() throws Exception {
+
+        if (sso_username == null && sso_username.isEmpty() && cregalink_username == null && cregalink_username.isEmpty()) {
+            log.error(username_missing_message);
+            throw new IllegalStateException("Missing required property: username");
+        } else if (sso_password == null && sso_password.isEmpty() && cregalink_password == null && cregalink_password.isEmpty()) {
+            log.error(password_missing_message);
+            throw new IllegalStateException("Missing required property: {}");
+        }
+
+        try {
+            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.cregalink_username_textbox));
+            _login_page.cregalink_username_textbox.click();
+            _login_page.cregalink_username_textbox.sendKeys(cregalink_username);
+            _login_page.cregalink_password_textbox.click();
+            _login_page.cregalink_password_textbox.sendKeys("qwerty");
+            _login_page.cregalink_login_button.click();
+            String Invalidmessage = _login_page.invalid_useridOrpassword_message.getText();
+            getWait().until(ExpectedConditions.visibilityOf(_login_page.invalid_useridOrpassword_message));
+            Assert.assertTrue(Invalidmessage.contains("Invalid user or password"));
+            log.info("Validation Successful: User could not login with an incorrect password when using password: {}");
+        } catch (Exception e) {
+            log.error("Validation failed, user could login using an incorrect password: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public void loginEmptyPassword() throws Exception {
+
+        if (sso_username == null && sso_username.isEmpty() && cregalink_username == null && cregalink_username.isEmpty()) {
+            log.error(username_missing_message);
+            throw new IllegalStateException("Missing required property username: {}");
+        }
+
+        try {
+            getWait().until(ExpectedConditions.elementToBeClickable(_login_page.cregalink_username_textbox));
+            _login_page.cregalink_username_textbox.click();
+            _login_page.cregalink_username_textbox.sendKeys(cregalink_username);
+            _login_page.cregalink_login_button.click();
+            String enteruserid_message = _login_page.enter_userid_message.getText();
+            Assert.assertTrue(enteruserid_message.contains("Please enter userid"));
+            log.info("Validation Successful: User could not login with an empty password");
+        } catch (Exception e) {
+            log.error("Verification failed, user could login with an empty password: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+ }

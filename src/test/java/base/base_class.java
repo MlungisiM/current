@@ -12,7 +12,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import utilities.UserDefinedException;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +50,7 @@ public abstract class base_class extends DriverFactory {
         setDriver(driver); // ✅ Make sure setDriver is called
     }
 
-    @AfterMethod
+   // @AfterMethod
     public void tearDown() {
         try {
             WebDriver driver = DriverFactory.getDriver();

@@ -22,15 +22,13 @@ public class login_tests extends base_class {
     @Test(testName = "Login Successfully")
     public void Login_Successfully() throws Exception {login.loginValidUsername();}
 
-//    @Test(testName = "Login with incorrect username")
-//    public void LoginIncorrectUsername() {
-//        login.loginIncorrectUsername();
-//    }
-
-//    @Test(testName = "Login with empty username")
-//    public void LoginEmptyUsername() {
-//        login.loginEmptyUsername();
-//    }
+    @Test(testName = "Login with incorrect username")
+    public void LoginIncorrectUsername() throws Exception {login.IncorrectUsername();}
 
 
+    @Test(testName = "Login with empty username")
+    public void LoginEmptyUsername() throws Exception {login.loginEmptyUsername();}
+
+    @Test(testName = "Login with an inccorect username")
+    public void LoginIncorrectPassword() throws Exception {login.IncorrectPassword();}
 }

@@ -26,7 +26,7 @@ public class login_page {
     public WebElement sso_signIn_button;
 
     @FindBy(id = "frmlogin:username")
-    public WebElement cregalink_username_button;
+    public WebElement cregalink_username_textbox;
 
     @FindBy(id = "idA_PWD_ForgotPassword")
     public WebElement forgot_password_link;
@@ -42,6 +42,21 @@ public class login_page {
 
     @FindBy(id = "frmlogin:btnlogin")
     public WebElement cregalink_login_button;
+
+    @FindBy(id = "j_id_k:j_id_m")
+    public WebElement disclaimer_checkbox;
+
+    @FindBy(id = "j_id_12:acceptNew")
+    public WebElement accept_disclaimer_button;
+
+    @FindBy(id = "j_id_36")
+    public WebElement logout_button;
+
+    @FindBy(xpath = "//span[normalize-space()='Please enter userid']")
+    public WebElement enter_userid_message;
+
+    @FindBy(xpath = "//span[normalize-space()='Invalid user or password']")
+    public WebElement invalid_useridOrpassword_message;
 
     public login_page() {
         this.driver = DriverFactory.getDriver();
