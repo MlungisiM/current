@@ -61,7 +61,7 @@ public class login_page {
     public login_page() {
         this.driver = DriverFactory.getDriver();
         if (this.driver == null) {
-            throw new IllegalStateException("Driver is null in LoginPage constructor.");
+            throw new IllegalStateException("Driver is null in login page constructor.");
         }
         PageFactory.initElements(driver, this);
     }

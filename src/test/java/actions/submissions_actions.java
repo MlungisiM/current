@@ -2,20 +2,19 @@ package actions;
 
 import base.base_class;
 import factory.DriverFactory;
-import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
+import pages.home_page;
 import pages.login_page;
 
 
-public class login_actions extends base_class {
+public class submissions_actions extends base_class {
 
     private login_page _login_page;
+    private home_page _home_page;
+
     String sso_username = DriverFactory.prop.getProperty("sso_username");
     String sso_password = DriverFactory.prop.getProperty("sso_password");
 
@@ -33,7 +32,7 @@ public class login_actions extends base_class {
             log.error("WebDriver is not initialized.");
             throw new IllegalStateException("WebDriver is not initialized.");
         }
-        _login_page = new login_page();
+        _home_page = new home_page();
     }
 
 
@@ -60,6 +59,8 @@ public class login_actions extends base_class {
             getWait().ignoring(StaleElementReferenceException.class)
                     .until(ExpectedConditions.elementToBeClickable(_login_page.accept_disclaimer_button))
                     .click();
+
+            _home_page.hide_policy_warning_button.click();
 
             log.info("User accepted the Cregalink disclaimer");
             Assert.assertTrue(_login_page.logout_button.isDisplayed());

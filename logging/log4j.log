@@ -1,4 +1,4 @@
-09:04:14.674 [main] INFO  - Chrome driver started
-09:04:16.708 [main] INFO  - Total time to load URL: 2 seconds
-09:04:21.553 [main] INFO  - User accepted the Cregalink disclaimer
-09:04:23.647 [main] INFO  - User logged in successfully with username: TE000159
+16:09:03.560 [main] INFO  - Chrome driver started
+16:09:04.619 [main] INFO  - Total time to load URL: 1 seconds
+16:09:08.853 [main] INFO  - User accepted the Cregalink disclaimer
+16:09:08.897 [main] INFO  - User logged in successfully with username: TE000159
