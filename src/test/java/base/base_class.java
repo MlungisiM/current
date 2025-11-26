@@ -1,5 +1,7 @@
 package base;
 
+import actions.daa_submissions_actions;
+import actions.login_actions;
 import factory.DriverFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +11,7 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import utilities.UserDefinedException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +28,8 @@ public abstract class base_class extends DriverFactory {
     public static Logger log = LogManager.getLogger(base_class.class);
     private static final Properties prop = new Properties();
     public static final int AUT_MAX_WAIT = 60;
+    login_actions login;
+    daa_submissions_actions daa_submissions;
 
     public void setUp() throws Exception {
         if (DriverFactory.prop == null || DriverFactory.prop.isEmpty()) {
@@ -45,6 +50,8 @@ public abstract class base_class extends DriverFactory {
         WebDriver driver = DriverFactory.initDriver();
         setDriver(driver); // ✅ Make sure setDriver is called
     }
+
+
 
     @AfterMethod
     public void tearDown() {

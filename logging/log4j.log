@@ -1,10 +1,11 @@
-09:29:28.693 [main] INFO  - Chrome driver started
-09:29:30.467 [main] INFO  - Total time to load URL: 1 seconds
-09:29:35.186 [main] INFO  - User accepted the Cregalink disclaimer
-09:29:37.352 [main] INFO  - User logged in successfully with username: TE000159
-09:29:37.914 [main] WARN  - TearDown error (driver likely already quit): Session ID is null. Using WebDriver after calling quit()?
+15:29:22.009 [main] INFO  - Chrome driver started
+15:29:22.719 [main] INFO  - Total time to load URL: 0 seconds
+15:29:26.501 [main] INFO  - User accepted the Cregalink disclaimer
+15:29:26.537 [main] INFO  - User logged in successfully with username: TE000159
+15:29:40.016 [main] INFO  - DAA file submitted successfully
+15:29:42.158 [main] WARN  - TearDown error (driver likely already quit): Session ID is null. Using WebDriver after calling quit()?
 Build info: version: '4.21.0', revision: '79ed462ef4'
 System info: os.name: 'Windows 11', os.arch: 'amd64', os.version: '10.0', java.version: '21.0.8'
 Driver info: org.openqa.selenium.chrome.ChromeDriver
 Command: [null, deleteAllCookies {}]
-Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 142.0.7444.176, chrome: {chromedriverVersion: 142.0.7444.175 (302067f14a4..., userDataDir: C:\Users\cgejr\AppData\Loca...}, fedcm:accounts: true, goog:chromeOptions: {debuggerAddress: localhost:65240}, goog:processID: 33416, networkConnectionEnabled: false, pageLoadStrategy: normal, platformName: windows, proxy: Proxy(), se:cdp: ws://localhost:65240/devtoo..., se:cdpVersion: 142.0.7444.176, setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}
+Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 142.0.7444.176, chrome: {chromedriverVersion: 142.0.7444.175 (302067f14a4..., userDataDir: C:\Users\cgejr\AppData\Loca...}, fedcm:accounts: true, goog:chromeOptions: {debuggerAddress: localhost:62725}, goog:processID: 16068, networkConnectionEnabled: false, pageLoadStrategy: normal, platformName: windows, proxy: Proxy(), se:cdp: ws://localhost:62725/devtoo..., se:cdpVersion: 142.0.7444.176, setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, webauthn:extension:credBlob: true, webauthn:extension:largeBlob: true, webauthn:extension:minPinLength: true, webauthn:extension:prf: true, webauthn:virtualAuthenticators: true}

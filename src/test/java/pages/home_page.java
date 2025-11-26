@@ -65,6 +65,12 @@ public class home_page extends base_class {
     @FindBy(id = "frmSearchPol:btnsearch")
     public WebElement policy_search_options_search_button;
 
+    @FindBy(id = "frmSearchPol:dtTbl:0:j_id_7e_15")
+    public WebElement policy_search_first_option_results;
+
+    @FindBy(xpath = "//td[normalize-space()='Age Analyses']")
+    public WebElement age_analysis_tab;//j_id_4
+
     @FindBy(id = "frmSearchPol:j_id_7e_n")
     public WebElement next_tab;
 
