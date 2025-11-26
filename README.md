@@ -1,10 +1,10 @@
-# Selenium.CucumberHybrid Framework
+# Selenium Framework
 
 The aim of this project is to create a test automation framework that will be used for testing web applications. This is a Selenium Java framework designed using Page Factory design pattern.
 
 ## Getting Started
 
-This project is a Maven project. To access this project, clone this project directly from Azure into your Eclipse and open the Maven project from your local directory into Eclipse.
+This project is a Maven project. To access this project, clone this project directly from Azure into your IntelliJ and open the Maven project from your local directory into IntelliJ.
 
 ## Prerequisites
 
@@ -25,10 +25,10 @@ Download and Install:
 ## Framework
 ### Tools
 ```bash
-Testing Framework: Page Object Model
+Testing Framework: Selenium
 Build Tool: Maven
 Testing Tool: TestNG
-Programming Language: Selenium Java
+Programming Language: Java
 ```
 
 ### Design
@@ -38,9 +38,9 @@ web-config and webdriver manager stored within framework to easily access and us
 
 ```bash
 Framework consists of following modules / packages:
-•	DriverFactory (driver initialization classes and driver config), 
-•	base (Hooks and various methods), 
-•	pages (web applications page factory), 
+•	DriverFactory (driver initialization classes and driver config)
+•	base (Hooks and various methods)
+•	pages (web applications page factory)
 •	resources(web-config.properties file)
 •	tests (for web tests)
 
@@ -72,7 +72,7 @@ To execute each Class, navigate to the respective class > right-click on it > ru
 
 ### To execute Mobile tests
 
-```bash
+bash
 1.	Launch the browser
 ```
 

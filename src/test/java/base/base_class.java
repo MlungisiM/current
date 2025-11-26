@@ -1,7 +1,6 @@
 package base;
 
 import factory.DriverFactory;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
@@ -10,9 +9,7 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import utilities.UserDefinedException;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -23,12 +20,11 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.function.Function;
 
-import static common_actions.common_actions.AUT_MAX_WAIT;
-
 public abstract class base_class extends DriverFactory {
 
     public static Logger log = LogManager.getLogger(base_class.class);
     private static final Properties prop = new Properties();
+    public static final int AUT_MAX_WAIT = 60;
 
     public void setUp() throws Exception {
         if (DriverFactory.prop == null || DriverFactory.prop.isEmpty()) {
@@ -50,7 +46,7 @@ public abstract class base_class extends DriverFactory {
         setDriver(driver); // ✅ Make sure setDriver is called
     }
 
-   // @AfterMethod
+    @AfterMethod
     public void tearDown() {
         try {
             WebDriver driver = DriverFactory.getDriver();
@@ -76,20 +72,6 @@ public abstract class base_class extends DriverFactory {
         return prop.getProperty(key);
     }
 
-    public void takeScreenshot(String screenshotName) {
-        try {
-            TakesScreenshot ts = (TakesScreenshot) getDriver();
-            File source = ts.getScreenshotAs(OutputType.FILE);
-            String dest = System.getProperty("user.dir") + "/target/" + screenshotName + ".png";
-            File destination = new File(dest);
-            FileUtils.copyFile(source, destination);
-            System.out.println("Screenshot taken: " + dest);
-        } catch (Exception e) {
-            log.error("Failed to take screenshot: " + e.getMessage());
-            System.err.println("Failed to take screenshot: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
 
     // Replace with explicit waits
     public void waitForElement(By locator, int timeoutInSeconds) {
@@ -102,16 +84,14 @@ public abstract class base_class extends DriverFactory {
     public static String generateDateTimeString() {
         Date dateNow = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_hh-mm-ss");
-        return dateFormat.format(dateNow).toString();
+        return dateFormat.format(dateNow);
     }
 
     public static String generateRandomEmail() {
 
         Random random = new Random();
         int randomNumber = random.nextInt(10000); // Generates a random number up to 9999
-
-        String email = "testuser_" + generateDateTimeString() + "_" + randomNumber + "@standardbank.co.za";
-        return email;
+        return "testuser_" + generateDateTimeString() + "_" + randomNumber + "@standardbank.co.za";
     }
 
     //generates a random phone number which starts with 27 (so it becomes a valid South African phone number)
@@ -124,8 +104,7 @@ public abstract class base_class extends DriverFactory {
 
         DecimalFormat df3 = new DecimalFormat("000"); // 3 zeros
         DecimalFormat df4 = new DecimalFormat("0000"); // 4 zeros
-        String phoneNumber = df3.format(num1) + "-" + df3.format(num2) + "-" + df4.format(num3);
-        return phoneNumber;
+        return df3.format(num1) + "-" + df3.format(num2) + "-" + df4.format(num3);
     }
 
     public static void navigateTo(String data) throws Exception {
@@ -161,7 +140,7 @@ public abstract class base_class extends DriverFactory {
             }
         });
 
-        if(JqueryExecuted==false || JavaScriptExecuted==false){
+        if(!JqueryExecuted || !JavaScriptExecuted){
             throw new UserDefinedException("WebPage is taking time to process. Max Wait time for element display " + MaxWaitTime);
         }
     }

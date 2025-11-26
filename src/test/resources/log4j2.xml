@@ -11,7 +11,7 @@
         </File>
     </Appenders>
     <Loggers>
-        <Logger name="ae.7x" level="info" additivity="true">
+        <Logger name="za.cgic" level="info" additivity="true">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="info">

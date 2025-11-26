@@ -1,7 +1,5 @@
 package pages;
 
-import actions.login_actions;
-import actions.submissions_actions;
 import base.base_class;
 import configurations.ExtentTestListener;
 import factory.DriverFactory;
@@ -9,7 +7,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 
 @Listeners(ExtentTestListener.class)
