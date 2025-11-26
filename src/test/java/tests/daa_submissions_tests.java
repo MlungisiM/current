@@ -1,7 +1,6 @@
 package tests;
 
 import actions.daa_submissions_actions;
-import actions.daa_submissions_actions;
 import actions.login_actions;
 import base.base_class;
 import configurations.ExtentTestListener;
@@ -32,9 +31,15 @@ public class daa_submissions_tests extends base_class {
     }
 
 
-    @Test(testName = "Submit a valid DAA file Successfully")
-    public void Valid_File_Submission() throws Exception {
+    @Test(testName = "Submit a valid DAA file")
+        public void Valid_Excel_File_Submission() throws Exception {
         login.loginValidUsername();
-        submissions.SubmitValidDAA();}
+        submissions.Submit_Valid_Excel_DAA();
+    }
 
+
+    @Test(testName = "Submit a valid CSV DAA file")
+        public void Valid_CSV_File_Submission() throws Exception {
+        login.loginValidUsername();
+        submissions.Submit_Valid_CSV_DAA();}
     }

@@ -24,7 +24,6 @@ public class login_actions extends base_class {
 
     String username_missing_message = "Username is missing in properties file.";
     String password_missing_message = "Password is missing in properties file.";
-    String page_url = getDriver().getCurrentUrl();
 
 
     @BeforeMethod
@@ -40,7 +39,7 @@ public class login_actions extends base_class {
     public void loginValidUsername() throws Exception {
 
         if (sso_username == null && sso_username.isEmpty() && cregalink_username == null && cregalink_username.isEmpty()) {
-            log.error("Current Page URL: {}", page_url);
+            log.error("Username is missing in properties file.: {}");
             throw new IllegalStateException("Missing required property: username");
         } else if (sso_password == null && sso_password.isEmpty() && cregalink_password == null && cregalink_password.isEmpty()) {
             log.error(password_missing_message);

@@ -52,6 +52,11 @@ public class daa_submissions_page {
     @FindBy(css = ".ui-datepicker-calendar td.ui-datepicker-today a")
     public WebElement date_picker_today;
 
+    @FindBy(css = ".ui-blockui, .ui-overlay, .ui-dialog-mask, .ui-widget-overlay, .ui-loading, .ajax-loading, .modal-backdrop")
+    public WebElement overlays;
+
+
+
     public daa_submissions_page() {
         this.driver = DriverFactory.getDriver();
         if (this.driver == null) {
