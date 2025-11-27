@@ -88,9 +88,99 @@ public class daa_submissions_actions extends base_class {
             _daa_submissions_page.upload_button.click();
             getWait().until(ExpectedConditions.visibilityOf(_daa_submissions_page.document_uploaded_successfully_message));
             Assert.assertTrue(_daa_submissions_page.document_uploaded_successfully_message.isDisplayed());
+            log.info("DAA csv file submitted successfully");
+        } catch (Exception e) {
+            log.error("DAA csv submission failed: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public void Submit_Valid_PDF_DAA() throws Exception {
+        try{
+            Select search_option = new Select(_home_page.policy_search_options_dropdown);
+            search_option.selectByVisibleText("Policy No");
+            _home_page.policy_search_options_textbox.sendKeys(adf_outdoor_policy_no);
+            _home_page.policy_search_options_search_button.click();
+            getWait().until(ExpectedConditions.visibilityOf(_home_page.policy_search_first_option_results));
+            _home_page.policy_search_first_option_results.click();
+            _home_page.declarations_link.click();
+            _home_page.age_analysis_tab.click();
+            _daa_submissions_page.date_of_extraction_textbox.click();
+            _daa_submissions_page.date_picker_today.click();
+            Select period = new Select(_daa_submissions_page.reporting_period_dropdown);
+            period.selectByIndex(1);
+            Select Apackage = new Select(_daa_submissions_page.accounting_package_dropdown);
+            Apackage.selectByIndex(1);
+            Path filePath = Paths.get("src", "test", "resources", "Mlu's DAA Submission.pdf");
+            String absolutePath = filePath.toAbsolutePath().toString();
+            WebElement fileInput = getDriver().findElement(By.cssSelector("input[type='file']"));
+            fileInput.sendKeys(absolutePath);
+            _daa_submissions_page.upload_button.click();
+            getWait().until(ExpectedConditions.visibilityOf(_daa_submissions_page.document_uploaded_successfully_message));
+            Assert.assertTrue(_daa_submissions_page.document_uploaded_successfully_message.isDisplayed());
             log.info("DAA pdf file submitted successfully");
         } catch (Exception e) {
             log.error("DAA pdf submission failed: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public void Submit_a_jpg_DAA() throws Exception {
+        try{
+            Select search_option = new Select(_home_page.policy_search_options_dropdown);
+            search_option.selectByVisibleText("Policy No");
+            _home_page.policy_search_options_textbox.sendKeys(adf_outdoor_policy_no);
+            _home_page.policy_search_options_search_button.click();
+            getWait().until(ExpectedConditions.visibilityOf(_home_page.policy_search_first_option_results));
+            _home_page.policy_search_first_option_results.click();
+            _home_page.declarations_link.click();
+            _home_page.age_analysis_tab.click();
+            _daa_submissions_page.date_of_extraction_textbox.click();
+            _daa_submissions_page.date_picker_today.click();
+            Select period = new Select(_daa_submissions_page.reporting_period_dropdown);
+            period.selectByIndex(1);
+            Select Apackage = new Select(_daa_submissions_page.accounting_package_dropdown);
+            Apackage.selectByIndex(1);
+            Path filePath = Paths.get("src", "test", "resources", "Mlu's DAA Submission.jpg");
+            String absolutePath = filePath.toAbsolutePath().toString();
+            WebElement fileInput = getDriver().findElement(By.cssSelector("input[type='file']"));
+            fileInput.sendKeys(absolutePath);
+            _daa_submissions_page.upload_button.click();
+            getWait().until(ExpectedConditions.visibilityOf(_daa_submissions_page.select_a_valid_document_message));
+            Assert.assertTrue(_daa_submissions_page.select_a_valid_document_message.isDisplayed() && _daa_submissions_page.valid_formats_message.isDisplayed());
+            log.info("Test Passed: DAA jpeg file was rejected");
+        } catch (Exception e) {
+            log.error("Test Failed: DAA jpg submission was wrongfully accepted", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public void Submit_a_txt_DAA() throws Exception {
+        try{
+            Select search_option = new Select(_home_page.policy_search_options_dropdown);
+            search_option.selectByVisibleText("Policy No");
+            _home_page.policy_search_options_textbox.sendKeys(adf_outdoor_policy_no);
+            _home_page.policy_search_options_search_button.click();
+            getWait().until(ExpectedConditions.visibilityOf(_home_page.policy_search_first_option_results));
+            _home_page.policy_search_first_option_results.click();
+            _home_page.declarations_link.click();
+            _home_page.age_analysis_tab.click();
+            _daa_submissions_page.date_of_extraction_textbox.click();
+            _daa_submissions_page.date_picker_today.click();
+            Select period = new Select(_daa_submissions_page.reporting_period_dropdown);
+            period.selectByIndex(1);
+            Select Apackage = new Select(_daa_submissions_page.accounting_package_dropdown);
+            Apackage.selectByIndex(1);
+            Path filePath = Paths.get("src", "test", "resources", "Mlu's DAA Submission.txt");
+            String absolutePath = filePath.toAbsolutePath().toString();
+            WebElement fileInput = getDriver().findElement(By.cssSelector("input[type='file']"));
+            fileInput.sendKeys(absolutePath);
+            _daa_submissions_page.upload_button.click();
+            getWait().until(ExpectedConditions.visibilityOf(_daa_submissions_page.select_a_valid_document_message));
+            Assert.assertTrue(_daa_submissions_page.select_a_valid_document_message.isDisplayed() && _daa_submissions_page.valid_formats_message.isDisplayed());
+            log.info("Test Passed: DAA .txt file was rejected");
+        } catch (Exception e) {
+            log.error("Test Failed: DAA .txt submission was wrongfully accepted", e.getMessage(), e);
             throw e;
         }
     }

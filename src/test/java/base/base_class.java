@@ -53,13 +53,13 @@ public abstract class base_class extends DriverFactory {
 
 
 
-    @AfterMethod
+   // @AfterMethod
     public void tearDown() {
         try {
             WebDriver driver = DriverFactory.getDriver();
             if (driver != null) {
-                getDriver().quit();
                 getDriver().manage().deleteAllCookies();
+                getDriver().quit();
                 DriverFactory.removeDriver();
             }
         } catch (Exception e) {

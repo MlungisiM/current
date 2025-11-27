@@ -55,7 +55,11 @@ public class daa_submissions_page {
     @FindBy(css = ".ui-blockui, .ui-overlay, .ui-dialog-mask, .ui-widget-overlay, .ui-loading, .ajax-loading, .modal-backdrop")
     public WebElement overlays;
 
+    @FindBy(xpath = "//*[@id=\"growl_container\"]/div[1]/div")
+    public WebElement valid_formats_message;
 
+    @FindBy(xpath = "//*[@id=\"growl_container\"]/div[2]/div/div[2]/span")
+    public WebElement select_a_valid_document_message;
 
     public daa_submissions_page() {
         this.driver = DriverFactory.getDriver();

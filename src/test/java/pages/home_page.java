@@ -56,7 +56,7 @@ public class home_page extends base_class {
     @FindBy(id = "frmSearchPol:j_id_7e_5")
     public WebElement show_policy_warnings_and_outstanding_actions_button;
 
-    @FindBy(id = "frmSearchPol:searchOption")
+    @FindBy(id = "frmSearchPol:search")
     public WebElement policy_search_options_dropdown;
 
     @FindBy(id = "frmSearchPol:SearchPol")

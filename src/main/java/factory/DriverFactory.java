@@ -1,5 +1,6 @@
 package factory;
 
+import com.epam.healenium.SelfHealingDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +12,6 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.interactions.Actions;
-
 import java.time.Duration;
 import java.util.Properties;
 import java.util.UUID;
@@ -23,7 +23,9 @@ public class DriverFactory {
     public static Actions actions;
     public static Properties prop;
 
+    // No changes needed to these standard methods
     public static WebDriver getDriver() {
+        // This now returns the SelfHealingDriver instance stored in ThreadLocal
         return driver.get();
     }
 
@@ -32,7 +34,10 @@ public class DriverFactory {
     }
 
     public static void removeDriver() {
-        driver.remove();
+        if (getDriver() != null) {
+            getDriver().quit();
+            driver.remove();
+        }
     }
 
     public static WebDriver initDriver() throws Exception {
@@ -51,6 +56,8 @@ public class DriverFactory {
         System.setProperty("hudson.model.DirectoryBrowserSupport.CSP",
                 "sandbox allow-scripts; default-src 'self'; script-src * 'unsafe-eval'; img-src *; style-src * 'unsafe-inline'; font-src *");
 
+        WebDriver delegateDriver = null; // Temporary variable to hold the base WebDriver
+
         try {
             switch (browserName) {
                 case "chrome":
@@ -61,29 +68,36 @@ public class DriverFactory {
                     chromeOptions.addArguments("--disable-dev-shm-usage");
                     chromeOptions.addArguments("--disable-gpu");
                     if (isHeadless) chromeOptions.addArguments("--headless=new");
-                    driver.set(new ChromeDriver(chromeOptions));
-                    log.info("Chrome driver started");
+                    delegateDriver = new ChromeDriver(chromeOptions); // Assign to delegate
+                    log.info("Chrome driver instantiated");
                     break;
 
                 case "firefox":
                     WebDriverManager.firefoxdriver().setup();
                     FirefoxOptions firefoxOptions = new FirefoxOptions();
                     if (isHeadless) firefoxOptions.addArguments("--headless");
-                    driver.set(new FirefoxDriver(firefoxOptions));
-                    log.info("Firefox driver started");
+                    delegateDriver = new FirefoxDriver(firefoxOptions); // Assign to delegate
+                    log.info("Firefox driver instantiated");
                     break;
 
                 case "edge":
                     WebDriverManager.edgedriver().setup();
                     EdgeOptions edgeOptions = new EdgeOptions();
                     if (isHeadless) edgeOptions.addArguments("--headless=new");
-                    driver.set(new EdgeDriver(edgeOptions));
-                    log.info("Edge driver started");
+                    delegateDriver = new EdgeDriver(edgeOptions); // Assign to delegate
+                    log.info("Edge driver instantiated");
                     break;
 
                 default:
                     throw new RuntimeException("Unsupported browser: " + browserName);
             }
+
+            // --- HEALENIUM INTEGRATION START ---
+            // Wrap the base driver instance in the SelfHealingDriver
+            WebDriver selfHealingDriver = SelfHealingDriver.create(delegateDriver);
+            driver.set(selfHealingDriver); // Set the wrapped driver into ThreadLocal
+            // --- HEALENIUM INTEGRATION END ---
+
 
             long startTime = System.currentTimeMillis();
             getDriver().get(prop.getProperty("internal_qa_environment.url"));
@@ -95,6 +109,10 @@ public class DriverFactory {
 
         } catch (Exception e) {
             log.error("Unable to start {} browser", browserName, e);
+            // Ensure any partially created driver is quit if an error occurs
+            if (delegateDriver != null) {
+                delegateDriver.quit();
+            }
             throw e;
         }
     }
